@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 class Category(models.Model):
+    ''' contains the course categories which is a foreign key of the courses model'''
     name = models.CharField(max_length=100)
     
     class Meta:
@@ -11,8 +12,15 @@ class Category(models.Model):
     
     def __str__(self) -> str:
         return f'{self.name}'
+    
+class CourseManager(models.Manager):
+    ''' custom manager to only return the upcoming courses '''
+    def upcoming(self):
+        today = timezone.now().date()  # Get today's date
+        return self.filter(date__gte=today)  # Return courses with a date >= today
 
 class Courses(models.Model):
+    ''' capturing courses '''
     name = models.CharField(max_length=100)
     category = models.ForeignKey(
         Category,
@@ -35,15 +43,20 @@ class Courses(models.Model):
         default=7,
         verbose_name="Anzahl Plätze")
     
+    # Assign the default manager
+    objects = models.Manager()  # Default manager
+    upcoming_courses = CourseManager()  # Custom manager for upcoming courses
+    
     class Meta:
         ordering = ["date"]
         verbose_name = "Kurs"
         verbose_name_plural = "Kurse"
     
     def __str__(self) -> str:
-        return f'{self.name} - {self.topic} ({self.start})'
+        return f'{self.name} - {self.topic} ({self.category})'
     
 class Booking(models.Model):
+    ''' when a user books a course, the booking is stored in this model '''
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

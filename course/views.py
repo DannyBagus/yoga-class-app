@@ -13,6 +13,10 @@ class CourseListView(ListView):
     template_name = 'course/courses.html'
     context_object_name = 'courses'
     
+    def get_queryset(self):
+        # Use the custom manager to get upcoming courses
+        return Courses.upcoming_courses.upcoming()  # Get courses with date >= today
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         courses = context['courses']
@@ -42,7 +46,7 @@ def filter_courses(request):
     elif filter_type == 'my_courses':
         courses = Courses.objects.filter(bookings__user=request.user)
     else:
-        courses = Courses.objects.all()
+        courses = Courses.upcoming_courses.upcoming()
         
     # Format date and time for each course
     formatted_courses = []
@@ -91,7 +95,7 @@ def create_booking(request):
                 except Credits.DoesNotExist:
                     messages.error(request, "Du hast noch keine Credits gekauft.")
     
-    courses = Courses.objects.all()
+    courses = Courses.upcoming_courses.upcoming()
     
     # Format the date and time for each course
     for course in courses:

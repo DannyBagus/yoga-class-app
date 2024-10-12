@@ -1,4 +1,38 @@
-{% block content %} 
-Hallo {{ user.username }}, Klicke auf den untenstehenden Link um deine Registrierung zu bestätigen:
-http://{{ domain }}{% url 'activate' uidb64=uid token=token %} 
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Heroicons CDN -->
+    <script src="https://unpkg.com/heroicons@2.0.13/dist/outline/heroicons.js"></script>
+
+    <!-- HTMX CDN -->
+    <script
+      src="https://unpkg.com/htmx.org@2.0.2"
+      integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Alpine JS -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+  </head>
+  <body>
+    <!-- Main content -->
+    <div class="container mx-auto p-6">
+      <p>Hallo {{ user.username }},</p>
+      <p>
+        Klicke auf den untenstehenden Link um deine Registrierung zu bestätigen:
+      </p>
+      <a href="http://{{ domain }}/users/activate/{{ uid }}/{{ token }}">
+        <button class="bg-[#e46aeb] p-4">Bestätigen</button></a
+      >
+    </div>
+  </body>
+</html>

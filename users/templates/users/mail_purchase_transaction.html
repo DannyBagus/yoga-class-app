@@ -1,14 +1,39 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Heroicons CDN -->
+    <script src="https://unpkg.com/heroicons@2.0.13/dist/outline/heroicons.js"></script>
+
+    <!-- HTMX CDN -->
+    <script
+      src="https://unpkg.com/htmx.org@2.0.2"
+      integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Alpine JS -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
   </head>
   <body>
-    <p>User: {{ user.first_name }} {{ user.last_name }}</p>
-    <p>Gekaufte Credits: {{ number }}</p>
+    <!-- Main content -->
+    <div class="container mx-auto p-6">
+      <p>User: {{ user.first_name }} {{ user.last_name }}</p>
+      <p>Gekaufte Credits: {{ number }}</p>
+      <p>
+        Stelle sicher, dass die Zahlung eingegangen ist und setze den Status der
+        Kauftransaktion anschliessend auf "abgeschlossen".
+      </p>
+    </div>
   </body>
 </html>

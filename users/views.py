@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from core.models import News
 from users.models import Credits, PurchaseTransaction
+from course.models import Booking
 
 def register_view(request):
     if request.method == "POST":
@@ -31,7 +32,14 @@ def register_view(request):
                 'token': default_token_generator.make_token(user),
             })
             to_email = form.cleaned_data.get('email')
-            send_mail(mail_subject, message, 'admin@mileja.ch', [to_email])
+            send_mail(
+                mail_subject, 
+                'body', 
+                'admin@mileja.ch', 
+                [to_email],
+                fail_silently=False,
+                html_message=message
+            )
             
             return render(request, "users/registration_complete.html")
     else:
@@ -40,7 +48,6 @@ def register_view(request):
 
 def logout_user(request):
     logout(request)
-    messages.success(request, ("Du wurdest erfolgreich ausgeloggt!"))
     return redirect('home')
 
 def login_user(request):
@@ -76,9 +83,9 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('home')
+        return render(request, 'users/confirmation_successful.html')
     else:
-        return render(request, 'registration/activation_invalid.html')
+        return render(request, 'users/activation_invalid.html')
     
     
 def my_account(request):
@@ -106,8 +113,20 @@ def my_account(request):
         }
         return render(request, 'partials/my_credits.html', context)
     
-    if nav_content == 'bookings':      
-        return render(request, 'partials/my_bookings.html')
+    if nav_content == 'bookings':
+        user = request.user
+        ''' get bookings of logged-in user '''
+        bookings = Booking.objects.filter(user=user).order_by('-course__date')
+        
+        # Format the time for each booking
+        for booking in bookings:
+            booking.course_time = booking.course.start.strftime('%H:%M')  # Format course start time
+            
+        context = {
+            "bookings": bookings
+        }
+        
+        return render(request, 'partials/my_bookings.html', context)
     
     if nav_content == 'gtc':      
         return render(request, 'partials/gtc.html')
@@ -140,7 +159,14 @@ def purchase_credits(request):
         'user': user,
         'number': number
     })
-    send_mail(mail_subject, message, 'admin@mileja.ch', ['admin@mileja.ch'])
+    send_mail(
+        mail_subject, 
+        'body', 
+        'admin@mileja.ch', 
+        ['admin@mileja.ch'],
+        fail_silently=False,
+        html_message=message
+    )
     
     # render transactions-partials        
     ''' get purchase history of user'''

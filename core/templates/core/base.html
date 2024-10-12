@@ -74,14 +74,14 @@
           style="display: none"
         >
           <a
-            href="{% url 'logout' %}"
-            class="block px-4 py-2 text-gray-700 text-center hover:bg-gray-100"
-            >Logout</a
-          >
-          <a
             href="{% url 'my-account' %}"
             class="block px-4 py-2 text-gray-700 text-center hover:bg-gray-100"
             >Mein Konto</a
+          >
+          <a
+            href="{% url 'logout' %}"
+            class="block px-4 py-2 text-gray-700 text-center hover:bg-gray-100"
+            >Logout</a
           >
         </div>
         {% else %}
@@ -135,7 +135,7 @@
           :class="auth_account_clicked ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-10 opacity-0 pointer-events-none'"
           class="absolute bottom-40 left-1/2 transform -translate-x-1/2 flex space-x-4 transition-all duration-300 ease-in-out"
         >
-          <a href="{ url 'my-account' }">
+          <a href="{% url 'my-account' %}">
             <button
               class="bg-white rounded-xl text-black text-2xl font-bold p-8 flex-initial w-64"
             >
@@ -246,7 +246,7 @@
     </nav>
 
     <!-- Main content -->
-    <div class="container mx-auto p-6">
+    <div class="container mx-auto p-6 sm:mb-24">
       {% block content %}
       <!-- Content goes here -->
       {% endblock %}

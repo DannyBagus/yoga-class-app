@@ -1,8 +1,13 @@
-{% load static %}
+{% load static %} {% if bookings %}
+  {% for booking in bookings %}  
+  <div
+    id="booking-{{ booking.pk }}"
+    class="bg-[#00df9a] min-w-[900] p-8 rounded-lg my-8"
+  >
+    <p class="text-white font-bold text-2xl">{{ booking.course}}</p>
+    <p class="italic text-sm">{{ booking.course.date}}</p>
+  </div>
 
-<div class="text-white">
-  <!-- bookings content -->
-  <div>Hier sind deine Kurse...</div>
-
-  <section id="messages">{% include 'partials/toast.html' %}</section>
+  {% endfor %}
 </div>
+{% endif %}
