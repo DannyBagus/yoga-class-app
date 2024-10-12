@@ -40,11 +40,11 @@ def filter_courses(request):
     filter_type = request.GET.get('filter', 'all')
     
     if filter_type == 'yoga':
-        courses = Courses.objects.filter(category__name='Yoga')
+        courses = Courses.upcoming_courses.upcoming().filter(category__name='Yoga')
     elif filter_type == 'pilates':
-        courses = Courses.objects.filter(category__name='Pilates')
+        courses = Courses.upcoming_courses.upcoming().filter(category__name='Pilates')
     elif filter_type == 'my_courses':
-        courses = Courses.objects.filter(bookings__user=request.user)
+        courses = Courses.upcoming_courses.upcoming().filter(bookings__user=request.user)
     else:
         courses = Courses.upcoming_courses.upcoming()
         
@@ -150,7 +150,7 @@ def cancel_booking(request):
             messages.error(request, "Es wurde keine Buchung gefunden.")
 
         # Render the updated courses list after booking cancellation
-        courses = Courses.objects.all()
+        courses = Courses.upcoming_courses.upcoming()
         
         # Format the date and time for each course
         for course in courses:
