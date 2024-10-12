@@ -1,0 +1,64 @@
+{% load static %} {% if courses %}
+<div>
+  <div class="w-full py-4 px-4">
+    <div class="max-w-[1240px] mx-auto grid md:grid-cols-4 md:gap-4 py-8 px-8">
+      {% if courses%} {% for course in courses %}
+      <div
+        class="flex flex-col pt-8 justify-center px-4 sm:mt-8 bg-black border-4 border-solid border-[#00df9a] rounded-lg"
+      >
+        {% if course.category.id == 1 %}<img
+          src="{% static 'core/images/ss_yoga.jpg' %}"
+          alt="Yoga"
+          class="mb-4"
+        />
+        {% else %}<img
+          src="{% static 'core/images/pilates_ss.jpg' %}"
+          alt="Pilates"
+          class="mb-4"
+        />
+        {% endif %}
+        <p class="text-[#00df9a] text-3xl mx-auto">
+          {{ course.category.name }} - {{ course.name }}
+        </p>
+        <p class="mx-auto text-xl">Thema: {{ course.topic }}</p>
+        <p class="mx-auto pb-8 text-xl">
+          {{ course.formatted_date }} - {{ course.formatted_time }}
+        </p>
+        <div class="flex items-center justify-center gap-4 pb-8">
+          <div
+            class="bg-[#e46aeb] p-4 rounded-xl font-bold text-xl text-center max-w-30 flex-auto"
+          >
+            {{ course.capacity }} Plätze
+          </div>
+          {% if course.pk in booked_courses %}
+          <button
+            class="bg-[#f24444] p-4 rounded-xl font-bold text-lg text-center max-w-30 flex-auto transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
+            hx-get="{% url 'cancel-booking' %}?course={{ course.pk }}"
+            hx-target="#courses-list"
+            hx-swap="innerHTML"
+          >
+            Abmelden
+          </button>
+          {% else %}
+          <button
+            class="bg-[#00df9a] p-4 rounded-xl font-bold text-xl text-center max-w-30 flex-auto transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
+            hx-get="{% url 'create-booking' %}?course={{ course.pk }}"
+            hx-target="#courses-list"
+            hx-swap="innerHTML"
+          >
+            Buchen
+          </button>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <p class="text-2xl">Keine Kurse gefunden.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<section id="messages" hx-swap-oob="true" hx-swap="innerHTML">
+  {% include 'partials/toast.html' %}
+</section>

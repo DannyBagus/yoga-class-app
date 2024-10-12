@@ -1,0 +1,37 @@
+{% load static %} {% if news %}
+<div x-data="{ showNews: false }">
+  {% for n in news %} {% if n.important %}
+  <!-- important news are bg-greenish -->
+  <div
+    id="news-list-item-{{ n.pk }}"
+    class="bg-[#00df9a] min-w-[900] p-8 rounded-lg cursor-pointer my-8"
+    hx-get="{% url 'news-item' %}?item={{ n.pk }}"
+    hx-target="#news-item"
+    hx-swap="innerHTML"
+    @click="showNews = true"
+  >
+    <p class="text-white font-bold text-2xl">{{ n.title}}</p>
+    <p class="italic text-sm">{{ n.publish_date}}</p>
+  </div>
+
+  {% else %}
+  <!-- not important news are bg-white -->
+  <div
+    id="news-list-item-{{ n.pk }}"
+    class="bg-white text-black min-w-[900] p-8 rounded-lg cursor-pointer my-8"
+    hx-get="{% url 'news-item' %}?item={{ n.pk }}"
+    hx-target="#news-item"
+    hx-swap="innerHTML"
+    @click="showNews = true"
+  >
+    <p class="font-bold text-2xl">{{ n.title}}</p>
+    <p class="italic text-sm">{{ n.publish_date}}</p>
+  </div>
+  {% endif %}
+
+  <div id="news-item" x-show="showNews" @click.outside="showNews = false">
+    {% include 'partials/news_item.html' %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

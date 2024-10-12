@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+<div class="text-white">
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-3xl text-[#00df9a]">Registrieren</p>
+  </div>
+  <div
+    class="bg-[#00df9a] rounded-xl p-8 max-w-[620px] flex flex-col justfiy-center mx-auto"
+  >
+    <form action="/users/register/" method="post" class="col-span-1">
+      {% csrf_token %}
+      <label for="id_username" class="block">Benutzername</label>
+      {{ form.username }}
+      <!-- Error for Username -->
+      {% if form.username.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.username.errors.0 }}</p>
+      {% endif %}
+
+      <label for="id_email" class="block">E-Mail</label>
+      {{ form.email }}
+      <!-- Error for email -->
+      {% if form.email.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.email.errors.0 }}</p>
+      {% endif %}
+
+      <label for="id_first_name" class="block">Vorname</label>
+      {{ form.first_name }}
+      <!-- Error for First Name -->
+      {% if form.first_name.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.first_name.errors.0 }}</p>
+      {% endif %}
+
+      <label for="id_last_name" class="block">Nachname</label>
+      {{ form.last_name }}
+      <!-- Error for Last Name -->
+      {% if form.last_name.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.last_name.errors.0 }}</p>
+      {% endif %}
+
+      <label for="id_password" class="block">Passwort</label>
+      {{ form.password1 }}
+      <!-- Error for password 1 -->
+      {% if form.password1.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.password1.errors.0 }}</p>
+      {% endif %}
+
+      <label for="id_password2" class="block">Passwort wiederholen</label>
+      {{ form.password2 }}
+      <!-- Error for password 2 -->
+      {% if form.password2.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.password2.errors.0 }}</p>
+      {% endif %}
+
+      <div class="flex flex-col items-center justify-center">
+        <button
+          class="bg-white text-black p-4 rounded-xl m-8 border-4 border-solid border-black"
+        >
+          Registrieren
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

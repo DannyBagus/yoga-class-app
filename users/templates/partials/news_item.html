@@ -1,0 +1,33 @@
+{% load static %} {% if news_item %}
+<div
+  id="news-item-{{ news_item.pk }}"
+  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-gray-100 min-w-[90%] md:min-w-[70%] p-16 rounded-lg"
+>
+  <p class="text-2xl font-bold text-[#00df9a] mb-8">{{ news_item.title}}</p>
+  <p class="text-black text-lg">{{ news_item.news_text}}</p>
+  <button
+    @click="showNews=false"
+    type="button"
+    class="bg-white text-gray-400 hover:text-gray-900 rounded-lg p-2.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+    data-dismiss-target="#toast-success"
+    aria-label="Close"
+  >
+    <span class="sr-only bg-[#e46aeb]">Close</span>
+    <svg
+      class="w-3 h-3"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 14 14"
+    >
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+      />
+    </svg>
+  </button>
+</div>
+{% endif %}

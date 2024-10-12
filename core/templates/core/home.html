@@ -1,0 +1,107 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+
+<div class="text-white">
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-screen mx-auto text-center flex flex-col justify-center"
+  >
+    <div class="grid md:grid-cols-7">
+      <p
+        class="text-[#e46aeb] text-3xl font-bold p-2 md:col-start-2 md:col-span-2"
+      >
+        YOGA
+      </p>
+      <p class="text-white text-5xl font-bold p-2">&</p>
+      <p
+        class="text-[#00df9a] text-3xl font-bold p-2 md:col-start-5 md:col-span-2"
+      >
+        PILATES
+      </p>
+    </div>
+    <h1 class="md:text-7xl sm:text-6xl text-4xl font-bold py-6">
+      Bei Deiner Hebamme.
+    </h1>
+    <div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'courses' %}">
+        <button
+          class="bg-[#e46aeb] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black"
+        >
+          Jetzt loslegen
+        </button>
+      </a>
+      {% else %}
+      <a href="{% url 'register' %}">
+        <button
+          class="bg-[#e46aeb] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black"
+        >
+          Jetzt loslegen
+        </button>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div
+    id="advantages"
+    class="max-w-[1240px] mt-6 w-full py-12 mx-auto text-center flex flex-col md:gr justify-center"
+  >
+    <h1 class="text-3xl font-bold py-6 bg-white text-black rounded-xl">
+      DEINE VORTEILE
+    </h1>
+    <div
+      class="mt-6 w-full pb-12 mx-auto text-center text-black grid md:grid-cols-2 md:gap-32"
+    >
+      <div class="p-12 bg-[#e46aeb] rounded-xl sm:mb-8">
+        <p class="text-3xl font-bold py-6">Körper</p>
+
+        <ul class="list-none">
+          <li class="text-xl py-4">Löst körperliche Verspannungen</li>
+          <li class="text-xl py-4">Fördert die Durchblutung</li>
+          <li class="text-xl py-4">
+            Stärkt den Beckenboden und die Muskeln sanft
+          </li>
+          <li class="text-xl py-4">Verbindet mit dem Atem</li>
+          <li class="text-xl py-4">
+            Zeigt körperliche Grenzen und Möglichkeiten auf
+          </li>
+        </ul>
+      </div>
+      <div class="py-12 rounded-xl bg-[#00df9a]">
+        <p class="text-3xl font-bold py-6">Mental</p>
+
+        <ul class="list-none">
+          <li class="text-xl py-4">Kann mentale Blockaden und Ängste lösen</li>
+          <li class="text-xl py-4">Schenkt Selbstvertrauen in deinen Körper</li>
+          <li class="text-xl py-4">
+            Fördert die Entspannung, entschleunigt und hilft Stress abzubauen
+          </li>
+          <li class="text-xl py-4">Verbindet mit dem Baby</li>
+          <li class="text-xl py-4">Bereitet auf die Geburt vor</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="content">
+    <div class="w-full bg-white py-16 px-4">
+      <div class="max-w-[1240px] mx-auto grid md:grid-cols-2">
+        <img
+          class="w-[500px] mx-auto my-4"
+          src="{% static 'core/images/ss_yoga.jpg' %}"
+          alt="/"
+        />
+        <div class="flex flex-col justify-center items-center">
+          <a href="{% url 'courses' %}">
+            <button
+              class="bg-black w-[200px] text-[#e46aeb] rounded-md font-medium my-6 mx-auto py-3"
+            >
+              Zur Kursübersicht
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

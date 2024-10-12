@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+<div class="text-white">
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-3xl text-[#00df9a]">Login</p>
+  </div>
+  <div
+    class="bg-[#00df9a] rounded-xl p-8 max-w-[620px] flex flex-col justfiy-center mx-auto"
+  >
+    <form action="/users/login/" method="post" class="col-span-1">
+      {% csrf_token %}
+      <label for="id_username" class="block">Benutzername</label>
+      {{ form.username }}
+      <!-- Error for Username -->
+      {% if form.username.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.username.errors.0 }}</p>
+      {% endif %}
+
+      <label for="id_password" class="block">Passwort</label>
+      {{ form.password }}
+      <!-- Error for Username -->
+      {% if form.password.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.password.errors.0 }}</p>
+      {% endif %}
+
+      <div class="flex flex-col items-center justify-center">
+        <button
+          class="bg-white text-black p-4 rounded-xl m-8 border-4 border-solid border-black"
+        >
+          Login
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

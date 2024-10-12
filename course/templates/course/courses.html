@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+
+<div class="text-white">
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-3xl text-[#00df9a]">Kursübersicht</p>
+  </div>
+
+  <div
+    id="filter-buttons"
+    class="flex justify-center items-center"
+    x-data="{ selected: '' }"
+  >
+    <p class="text-3xl text-[#00df9a] mr-8">Filter:</p>
+    <div id="buttons">
+      <button
+        hx-get="{% url 'filter-courses' %}?filter="
+        hx-target="#courses-list"
+        hx-swap="innerHTML"
+        class="rounded-xl p-4"
+        @click="selected = ''"
+        :class="selected == '' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
+      >
+        Alle Kurse
+      </button>
+      <button
+        hx-get="{% url 'filter-courses' %}?filter=yoga"
+        hx-target="#courses-list"
+        hx-swap="innerHTML"
+        class="rounded-xl p-4"
+        @click="selected = 'yoga'"
+        :class="selected == 'yoga' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
+      >
+        Yoga
+      </button>
+      <button
+        hx-get="{% url 'filter-courses' %}?filter=pilates"
+        hx-target="#courses-list"
+        hx-swap="innerHTML"
+        class="rounded-xl p-4"
+        @click="selected = 'pilates'"
+        :class="selected == 'pilates' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
+      >
+        Pilates
+      </button>
+      {% if user.is_authenticated %}
+      <button
+        hx-get="{% url 'filter-courses' %}?filter=my_courses"
+        hx-target="#courses-list"
+        hx-swap="innerHTML"
+        class="rounded-xl p-4"
+        @click="selected = 'my_courses'"
+        :class="selected == 'my_courses' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
+      >
+        Meine Kurse
+      </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="courses-list">{% include 'partials/course_list.html' %}</div>
+</div>
+
+<section id="messages">{% include 'partials/toast.html' %}</section>
+
+{% endblock %}

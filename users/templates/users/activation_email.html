@@ -1,0 +1,4 @@
+{% block content %} 
+Hallo {{ user.username }}, Klicke auf den untenstehenden Link um deine Registrierung zu bestätigen:
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %} 
+{% endblock %}
