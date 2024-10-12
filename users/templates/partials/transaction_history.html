@@ -1,0 +1,30 @@
+{% if purchase_transactions %}
+<div id="purchase-transactions" class="flex justify-center items-center mt-24">
+  <table
+    class="table-auto border-collapse w-full max-w-4xl bg-white rounded-xl shadow-lg overflow-hidden"
+  >
+    <thead class="bg-[#e46aeb] text-white">
+      <tr>
+        <th class="px-6 py-4 text-left">Bestelldatum</th>
+        <th class="px-6 py-4 text-center">Anzahl Credits</th>
+        <th class="px-6 py-4 text-center">Status</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 text-black">
+      {% for pt in purchase_transactions %}
+      <tr class="hover:bg-gray-100">
+        <td class="px-6 py-4">{{ pt.date }}</td>
+        <td class="px-6 py-4 text-center">{{ pt.number }}</td>
+        <td class="px-6 py-4 text-center">
+          <span
+            class="inline-block px-3 py-1 text-sm font-semibold rounded-full text-white {% if pt.status == 'pending' %} bg-red-500 {% else %} bg-green-500 {% endif %}"
+          >
+            {{ pt.get_status_display }}
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}

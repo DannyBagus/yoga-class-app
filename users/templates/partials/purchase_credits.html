@@ -54,37 +54,46 @@
     </div>
 
     <!-- button for 1 credit -->
-    <a href="{% url 'confirm-purchase' %}?number=1" x-show="selected == 1">
-      <button
-        class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
-        :disabled="!accepted"
-        :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
-      >
-        Bestätigen
-      </button>
-    </a>
+    <button
+      x-show="selected == 1"
+      @click="purchaseCredits=false"
+      class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
+      :disabled="!accepted"
+      :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
+      hx-get="{% url 'confirm-purchase' %}?number=1"
+      hx-target="#transaction-history"
+      hx-swap="innerHTML"
+    >
+      Bestätigen
+    </button>
 
     <!-- button for 5 credits -->
-    <a href="{% url 'confirm-purchase' %}?number=5" x-show="selected == 5">
-      <button
-        class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
-        :disabled="!accepted"
-        :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
-      >
-        Bestätigen
-      </button>
-    </a>
+    <button
+      x-show="selected == 5"
+      @click="purchaseCredits=false"
+      class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
+      :disabled="!accepted"
+      :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
+      hx-get="{% url 'confirm-purchase' %}?number=5"
+      hx-target="#transaction-history"
+      hx-swap="innerHTML"
+    >
+      Bestätigen
+    </button>
 
     <!-- button for 10 credits -->
-    <a href="{% url 'confirm-purchase' %}?number=10" x-show="selected == 10">
-      <button
-        class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
-        :disabled="!accepted"
-        :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
-      >
-        Bestätigen
-      </button>
-    </a>
+    <button
+      x-show="selected == 10"
+      @click="purchaseCredits=false"
+      class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
+      :disabled="!accepted"
+      :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
+      hx-get="{% url 'confirm-purchase' %}?number=10"
+      hx-target="#transaction-history"
+      hx-swap="innerHTML"
+    >
+      Bestätigen
+    </button>
   </div>
   <button
     @click="purchaseCredits=false"

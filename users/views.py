@@ -94,18 +94,14 @@ def my_account(request):
     
     if nav_content == 'credits':   
         user = request.user
-        ''' get number of credits the user has or 0 '''
-        try:
-            credits = Credits.objects.get(user=user)
-            credits_value = credits.number
-        except Credits.DoesNotExist:
-            credits_value = 0
+        ''' get number of credits the user has '''
+        credits = Credits.objects.get(user=user)
             
         ''' get purchase history of user'''
         purchase_transactions = PurchaseTransaction.objects.filter(user=user).order_by('-date')
 
         context = {
-            "credits": credits_value,
+            "credits": credits.number,
             "purchase_transactions": purchase_transactions
         }
         return render(request, 'partials/my_credits.html', context)
@@ -146,6 +142,13 @@ def purchase_credits(request):
     })
     send_mail(mail_subject, message, 'admin@mileja.ch', ['admin@mileja.ch'])
     
-    return redirect('my-account')
+    # render transactions-partials        
+    ''' get purchase history of user'''
+    purchase_transactions = PurchaseTransaction.objects.filter(user=user).order_by('-date')
+
+    context = {
+        "purchase_transactions": purchase_transactions
+    }
+    return render(request, 'partials/transaction_history.html', context)
     
     
