@@ -1,0 +1,21 @@
+version: "3"
+services:
+  yoga-app:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    ports:
+      - 8020:8020
+    image: yoga-app:yoga-app
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.test-miwb.entrypoints: "websecure"
+      traefik.http.routers.test-miwb.middlewares: "authelia@docker"
+      traefik.http.routers.test-miwb.rule: "Host(`kurse.mileja.duckdns.org`)"
+      traefik.http.routers.test-miwb.tls: "true"
+      traefik.http.routers.test-miwb.tls.options: "default"
+      traefik.http.routers.test-miwb.tls.certresolver: "myresolver"
+      traefik.http.services.test-miwb.loadbalancer.server.port: "8020"
+      traefik.http.services.test-miwb.loadbalancer.server.scheme: "http"
+    container_name: yoga-app
