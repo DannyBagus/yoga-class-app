@@ -11,7 +11,7 @@ ENV LC_ALL de_DE.UTF-8
 
 # Section 3- Compiler and OS libraries
 RUN apt-get update \  
-  && apt-get install -y --no-install-recommends build-essential default-mysql-server default-libmysqlclient-dev locales \  
+  && apt-get install -y --no-install-recommends build-essential locales \  
   && sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen \
   && dpkg-reconfigure --frontend=noninteractive locales \ 
   && rm -rf /var/lib/apt/lists/*
