@@ -53,7 +53,7 @@ class Courses(models.Model):
         verbose_name_plural = "Kurse"
     
     def __str__(self) -> str:
-        return f'{self.name} - {self.topic} ({self.category})'
+        return f'{self.category.name} - {self.name}'
     
 class Booking(models.Model):
     ''' when a user books a course, the booking is stored in this model '''

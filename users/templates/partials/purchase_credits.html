@@ -56,7 +56,7 @@
     <!-- button for 1 credit -->
     <button
       x-show="selected == 1"
-      @click="purchaseCredits=false"
+      @click="purchaseCredits=false, confirmed=1"
       class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
       :disabled="!accepted"
       :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
@@ -70,7 +70,7 @@
     <!-- button for 5 credits -->
     <button
       x-show="selected == 5"
-      @click="purchaseCredits=false"
+      @click="purchaseCredits=false, confirmed=5"
       class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
       :disabled="!accepted"
       :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
@@ -84,7 +84,7 @@
     <!-- button for 10 credits -->
     <button
       x-show="selected == 10"
-      @click="purchaseCredits=false"
+      @click="purchaseCredits=false, confirmed=10"
       class="bg-[#00df9a] rounded-xl p-4 m-8 text-white text-xl"
       :disabled="!accepted"
       :class="!accepted ? 'opacity-50 cursor-not-allowed' : ''"
@@ -96,6 +96,7 @@
     </button>
   </div>
   <button
+    id="close-button"
     @click="purchaseCredits=false"
     type="button"
     class="bg-white text-gray-400 hover:text-gray-900 rounded-lg p-2.5 mt-16 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"

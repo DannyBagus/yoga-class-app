@@ -1,18 +1,28 @@
-{% if purchase_transactions %}
-<div id="purchase-transactions" class="flex justify-center items-center mt-24">
+{% load static %} {% if purchase_transactions %}
+<div
+  id="purchase-transactions"
+  class="flex justify-center items-center mt-24"
+  x-data="{ displayInvoice: '' }"
+>
   <table
     class="table-auto border-collapse w-full max-w-4xl bg-white rounded-xl shadow-lg overflow-hidden"
+    @click.outside="displayInvoice=''"
   >
     <thead class="bg-[#e46aeb] text-white">
       <tr>
         <th class="px-6 py-4 text-left">Bestelldatum</th>
         <th class="px-6 py-4 text-center">Anzahl Credits</th>
         <th class="px-6 py-4 text-center">Status</th>
+        <th></th>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-200 text-black">
       {% for pt in purchase_transactions %}
-      <tr class="hover:bg-gray-100">
+      <tr
+        id="tr-{{ pt.pk }}"
+        class="hover:bg-gray-100"
+        @click="displayInvoice='invoice-{{ pt.pk }}'"
+      >
         <td class="px-6 py-4">{{ pt.date }}</td>
         <td class="px-6 py-4 text-center">{{ pt.number }}</td>
         <td class="px-6 py-4 text-center">
@@ -22,6 +32,52 @@
             {{ pt.get_status_display }}
           </span>
         </td>
+        <td id="chevron-icon" class="text-left">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m19.5 8.25-7.5 7.5-7.5-7.5"
+            />
+          </svg>
+        </td>
+      </tr>
+      <tr
+        id="invoice-{{ pt.pk }}"
+        x-show="displayInvoice=='invoice-{{ pt.pk }}'"
+      >
+        {% if pt.number == 1 %}
+        <td colspan="3">
+          <img
+            class="w-full"
+            src="{% static 'users/images/QR_1_Credit.png' %}"
+            alt="invoice-1-credit"
+          />
+        </td>
+        {% elif pt.number == 5 %}
+        <td colspan="3">
+          <img
+            class="w-full"
+            src="{% static 'users/images/QR_5_Credits.png' %}"
+            alt="invoice-5-credits"
+          />
+        </td>
+        {% elif pt.number == 10 %}
+        <td colspan="3">
+          <img
+            class="w-full"
+            src="{% static 'users/images/QR_10_Credits.png' %}"
+            alt="invoice-10-credits"
+          />
+        </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>
