@@ -8,6 +8,8 @@ services:
     ports:
       - 8020:8020
     image: yoga-app:yoga-app
+    networks:
+      - "daniel_default"
     labels:
       traefik.enable: "true"
       traefik.http.routers.yoga-app.entrypoints: "websecure"
@@ -19,3 +21,8 @@ services:
       traefik.http.services.yoga-app.loadbalancer.server.port: "8020"
       traefik.http.services.yoga-app.loadbalancer.server.scheme: "http"
     container_name: yoga-app
+
+networks:
+  daniel_default:
+    external: true
+    name: "daniel_default"
