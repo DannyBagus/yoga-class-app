@@ -54,9 +54,13 @@ def filter_courses(request):
         course.formatted_date = course.date.strftime('%d.%m.%Y')  # Format date as day.month.year
         course.formatted_time = course.start.strftime('%H:%M')    # Format time as hour:minute
         formatted_courses.append(course)
+        
+    # Get course IDs where the user has a booking        
+    try:     
+        booked_courses = Booking.objects.filter(user=request.user).values_list('course_id', flat=True)
     
-    # Get course IDs where the user has a booking
-    booked_courses = Booking.objects.filter(user=request.user).values_list('course_id', flat=True)
+    except:
+        booked_courses = ''
                        
     context = {
         'courses': courses,
