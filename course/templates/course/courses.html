@@ -19,7 +19,7 @@
         hx-get="{% url 'filter-courses' %}?filter="
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-4 min-w-[20px]"
+        class="rounded-xl p-2 md:p-4"
         @click="selected = ''"
         :class="selected == '' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
@@ -29,7 +29,7 @@
         hx-get="{% url 'filter-courses' %}?filter=yoga"
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-4"
+        class="rounded-xl p-2 md:p-4"
         @click="selected = 'yoga'"
         :class="selected == 'yoga' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
@@ -39,7 +39,7 @@
         hx-get="{% url 'filter-courses' %}?filter=pilates"
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-4"
+        class="rounded-xl p-2 md:p-4"
         @click="selected = 'pilates'"
         :class="selected == 'pilates' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
@@ -50,7 +50,7 @@
         hx-get="{% url 'filter-courses' %}?filter=my_courses"
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-4"
+        class="rounded-xl p-2 md:p-4"
         @click="selected = 'my_courses'"
         :class="selected == 'my_courses' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
