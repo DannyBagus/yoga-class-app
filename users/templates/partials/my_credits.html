@@ -1,6 +1,9 @@
 {% load static %}
 
-<div class="text-white" x-data="{ purchaseCredits: false, confirmed: '' }">
+<div
+  class="text-white"
+  x-data="{ purchaseCredits: false, confirmed: '', displayInvoice: '' }"
+>
   <!-- Credits content -->
   <div
     id="credits"
@@ -94,7 +97,7 @@
     </p>
     <img
       class="w-[80%] mx-auto my-4"
-      src="{% static 'users/images/QR_5_Credit_compact.png' %}"
+      src="{% static 'users/images/QR_5_Credits_compact.png' %}"
       alt="invoice-1-credit"
     />
     <button

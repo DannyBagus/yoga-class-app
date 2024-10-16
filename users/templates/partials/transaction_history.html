@@ -3,55 +3,76 @@
   id="purchase-transactions"
   class="flex justify-center items-center mt-24"
   x-data="{ displayInvoice: '' }"
+  x-init="displayInvoice=''"
 >
   <table
     class="table-auto border-collapse w-[90%] bg-white rounded-xl shadow-lg overflow-hidden"
     @click.outside="displayInvoice=''"
   >
-    <thead class="bg-[#e46aeb] text-white">
+    <thead class="bg-[#e46aeb] text-white text-xs">
       <tr>
-        <th class="p-2 md:px-6 md:py-4 text-left">Bestelldatum</th>
-        <th class="p-2 md:px-6 md:py-4 text-center">Anzahl Credits</th>
-        <th class="p-2 md:px-6 md:py-4 text-center">Status</th>
+        <th class="p-3 md:px-6 md:py-4 text-left">Bestelldatum</th>
+        <th class="p-3 md:px-6 md:py-4 text-center">Anzahl Credits</th>
+        <th class="p-3 md:px-6 md:py-4 text-center">Status</th>
         <th></th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-gray-200 text-black">
+    <tbody class="divide-y divide-gray-200 text-black text-xs">
       {% for pt in purchase_transactions %}
       <tr
         id="tr-{{ pt.pk }}"
         class="hover:bg-gray-100"
-        @click="displayInvoice='invoice-{{ pt.pk }}'"
+        @click="displayInvoice === 'invoice-{{ pt.pk }}' ? displayInvoice='' : displayInvoice='invoice-{{ pt.pk }}'"
       >
-        <td class="p-2 md:px-6 md:py-4">{{ pt.date }}</td>
-        <td class="p-2 md:px-6 md:py-4 text-center">{{ pt.number }}</td>
-        <td class="p-2 md:px-6 md:py-4 text-center">
+        <td class="p-3 md:px-6 md:py-4">{{ pt.date }}</td>
+        <td class="p-3 md:px-6 md:py-4 text-center">{{ pt.number }}</td>
+        <td class="p-3 md:px-6 md:py-4 text-center">
           <span
             class="inline-block px-3 py-1 text-sm font-semibold rounded-full text-white {% if pt.status == 'pending' %} bg-red-500 {% else %} bg-green-500 {% endif %}"
           >
             {{ pt.get_status_display }}
           </span>
         </td>
-        <td id="chevron-icon" class="text-left">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="size-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m19.5 8.25-7.5 7.5-7.5-7.5"
-            />
-          </svg>
+        <td id="chevron-icon" class="text-left p-3 md:px-6">
+          <!-- Conditionally render chevron based on displayInvoice -->
+          <template x-if="displayInvoice === 'invoice-{{ pt.pk }}'">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 15.75L12 8.25l-7.5 7.5"
+              />
+            </svg>
+          </template>
+          <template x-if="displayInvoice !== 'invoice-{{ pt.pk }}'">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m19.5 8.25-7.5 7.5-7.5-7.5"
+              />
+            </svg>
+          </template>
         </td>
       </tr>
       <tr
         id="invoice-{{ pt.pk }}"
         x-show="displayInvoice=='invoice-{{ pt.pk }}'"
+        :class=" displayInvoice=='invoice-{{ pt.pk }}' ? '' : 'hidden' "
       >
         {% if pt.number == 1 %}
         <td colspan="3">

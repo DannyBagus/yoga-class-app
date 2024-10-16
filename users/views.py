@@ -92,7 +92,7 @@ def my_account(request):
     nav_content = request.GET.get('navigate')
     
     if nav_content == 'news':      
-        news = News.objects.filter(publish_date__lte=timezone.now())        
+        news = News.objects.filter(publish_date__lte=timezone.now()).order_by('-publish_date')  
         context = {
             "news": news
         }

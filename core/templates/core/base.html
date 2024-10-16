@@ -253,5 +253,13 @@
       <!-- Content goes here -->
       {% endblock %}
     </div>
+
+    <!-- Alpine.js reinitialization script -->
+    <script>
+      document.addEventListener("htmx:afterSwap", function (evt) {
+        // Reinitialize Alpine.js after an HTMX swap
+        Alpine.initTree(evt.target);
+      });
+    </script>
   </body>
 </html>

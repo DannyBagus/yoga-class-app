@@ -6,7 +6,9 @@
   <p class="text-lg md:text-2xl font-bold text-[#00df9a] mb-4 md:mb-8">
     {{ news_item.title}}
   </p>
-  <p class="text-black text-sm md:text-lg">{{ news_item.news_text}}</p>
+  <p class="text-black text-justify text-sm md:text-lg">
+    {{ news_item.news_text}}
+  </p>
   <button
     @click="showNews=false"
     type="button"
