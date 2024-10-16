@@ -3,9 +3,9 @@
 <div class="text-white">
   <div
     id="header"
-    class="max-w-[800px] mt-[-96px] w-full h-64 mx-auto text-center flex flex-col justify-center"
+    class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
   >
-    <p class="text-3xl text-[#00df9a]">Kursübersicht</p>
+    <p class="text-xl md:text-3xl text-[#00df9a]">Kursübersicht</p>
   </div>
 
   <div
@@ -13,7 +13,7 @@
     class="flex flex-col justify-center items-center"
     x-data="{ selected: '' }"
   >
-    <p class="text-xl md:text-3xl text-[#00df9a] mr-8 pb-4">Filter:</p>
+    <p class="text-xl md:text-3xl text-[#00df9a] md:mr-8 pb-4">Filter:</p>
     <div id="buttons" class="flex space-x-4 justify-cener items-center text-md">
       <button
         hx-get="{% url 'filter-courses' %}?filter="

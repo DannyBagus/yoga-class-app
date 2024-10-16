@@ -139,6 +139,9 @@ def news_item(request):
     news_item = News.objects.get(pk=news_item_id)
     return render(request, 'partials/news_item.html', {"news_item": news_item})
 
+def gtc_full(request):
+    return render(request, 'users/gtc_base.html')
+
 def purchase_credits(request):
     user = request.user
     

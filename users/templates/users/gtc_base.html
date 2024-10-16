@@ -1,0 +1,9 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+
+<div>
+  <div id="gtc">{% include 'partials/gtc.html' %}</div>
+</div>
+
+<section id="messages">{% include 'partials/toast.html' %}</section>
+
+{% endblock %}
