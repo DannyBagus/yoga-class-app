@@ -10,16 +10,16 @@
 
   <div
     id="filter-buttons"
-    class="flex justify-center items-center"
+    class="flex flex-col justify-center items-center"
     x-data="{ selected: '' }"
   >
-    <p class="text-3xl text-[#00df9a] mr-8">Filter:</p>
-    <div id="buttons">
+    <p class="text-xl md:text-3xl text-[#00df9a] mr-8 pb-4">Filter:</p>
+    <div id="buttons" class="flex space-x-4 justify-cener items-center text-md">
       <button
         hx-get="{% url 'filter-courses' %}?filter="
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-4"
+        class="rounded-xl p-4 min-w-[20px]"
         @click="selected = ''"
         :class="selected == '' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >

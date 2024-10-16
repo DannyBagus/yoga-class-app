@@ -4,9 +4,9 @@
   <!-- Header Section -->
   <div
     id="header"
-    class="max-w-[800px] mt-[-96px] w-full h-64 mx-auto text-center flex flex-col justify-center"
+    class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
   >
-    <p class="text-3xl text-[#00df9a]">Mein Konto</p>
+    <p class="text-xl md:text-3xl text-[#00df9a]">Mein Konto</p>
   </div>
 
   <!-- navigation buttons -->
@@ -20,13 +20,13 @@
   >
     <div
       id="buttons"
-      class="flex justify-between items-center max-w-[1200px] mx-auto mb-20"
+      class="flex justify-center space-x-4 items-center max-w-[1200px] mx-auto mb-10"
     >
       <button
         hx-get="{% url 'my-account' %}?navigate=news"
         hx-target="#my-account-content"
         hx-swap="innerHTML"
-        class="rounded-xl p-6 m-4 md:p-12 text-lg md:text-3xl flex border-2 border-[#e46aeb]"
+        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb]"
         @click="selected = ''"
         :class="selected == '' ? 'bg-[#e46aeb] text-white' : 'bg-white text-[#e46aeb]'"
       >
@@ -36,7 +36,7 @@
         hx-get="{% url 'my-account' %}?navigate=credits"
         hx-target="#my-account-content"
         hx-swap="innerHTML"
-        class="rounded-xl p-6 m-4 md:p-12 text-lg md:text-3xl flex border-2 border-[#e46aeb]"
+        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb]"
         @click="selected = 'credits'"
         :class="selected == 'credits' ? 'bg-[#e46aeb] text-white' : 'bg-white text-[#e46aeb]'"
       >
@@ -46,17 +46,17 @@
         hx-get="{% url 'my-account' %}?navigate=bookings"
         hx-target="#my-account-content"
         hx-swap="innerHTML"
-        class="rounded-xl p-6 m-4 md:p-12 text-lg md:text-3xl flex border-2 border-[#e46aeb]"
+        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb]"
         @click="selected = 'bookings'"
         :class="selected == 'bookings' ? 'bg-[#e46aeb] text-white' : 'bg-white text-[#e46aeb]'"
       >
-        Meine Kurse
+        Buchungen
       </button>
       <button
         hx-get="{% url 'my-account' %}?navigate=gtc"
         hx-target="#my-account-content"
         hx-swap="innerHTML"
-        class="rounded-xl p-6 m-4 md:p-12 text-lg md:text-3xl flex border-2 border-[#e46aeb]"
+        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb]"
         @click="selected = 'gtc'"
         :class="selected == 'gtc' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >

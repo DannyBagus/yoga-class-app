@@ -33,7 +33,9 @@
       x-data="{ account_open: false, account_clicked: false, auth_account_clicked:  false }"
     >
       <!-- Logo -->
-      <div class="w-full text-3xl font-bold text-upper text-[#e46aeb] m-4">
+      <div
+        class="w-full text-lg md:text-3xl font-bold text-upper text-[#e46aeb] m-4"
+      >
         <a href="/">MILEJA YOGA & PILATES.</a>
       </div>
 
@@ -104,25 +106,25 @@
 
       <div
         id="mobile-menu"
-        class="fixed bottom-0 inset-x-0 bg-[#e46aeb] text-black py-4 shadow-lg flex justify-between items-center md:hidden"
+        class="fixed bottom-0 inset-x-0 bg-gradient-to-r from-blue-500 to-purple-500 py-2 shadow-lg border border-[#e46aeb] flex justify-between items-center md:hidden text-white"
         @click.outside="account_clicked = false, auth_account_clicked = false"
       >
         <!-- Login and Register button -->
 
         <div
           :class="account_clicked ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-10 opacity-0 pointer-events-none'"
-          class="absolute bottom-40 left-1/2 transform -translate-x-1/2 flex space-x-4 transition-all duration-300 ease-in-out"
+          class="absolute bottom-[100px] left-1/2 transform -translate-x-1/2 flex space-x-4 transition-all duration-300 ease-in-out"
         >
           <a href="{% url 'register' %}">
             <button
-              class="bg-white rounded-xl text-black text-2xl font-bold p-8 flex-initial w-64"
+              class="bg-white rounded-xl text-md text-black font-bold p-4 flex-initial min-w-[150px]"
             >
               Registrieren
             </button>
           </a>
           <a href="{% url 'login' %}">
             <button
-              class="bg-[#00df9a] rounded-xl text-black text-2xl font-bold p-8 flex-initial w-64"
+              class="bg-[#00df9a] rounded-xl text-md font-bold p-4 flex-initial min-w-[150px]"
             >
               Login
             </button>
@@ -133,18 +135,18 @@
 
         <div
           :class="auth_account_clicked ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-10 opacity-0 pointer-events-none'"
-          class="absolute bottom-40 left-1/2 transform -translate-x-1/2 flex space-x-4 transition-all duration-300 ease-in-out"
+          class="absolute bottom-[100px] left-1/2 transform -translate-x-1/2 flex space-x-4 transition-all duration-300 ease-in-out"
         >
           <a href="{% url 'my-account' %}">
             <button
-              class="bg-white rounded-xl text-black text-2xl font-bold p-8 flex-initial w-64"
+              class="bg-white rounded-xl text-black text-md font-bold p-4 flex-initial min-w-[150px]"
             >
               Mein Konto
             </button>
           </a>
           <a href="{% url 'logout' %}">
             <button
-              class="bg-[#00df9a] rounded-xl text-black text-2xl font-bold p-8 flex-initial w-64"
+              class="bg-[#00df9a] rounded-xl text-md font-bold p-4 flex-initial min-w-[150px]"
             >
               Logout
             </button>
@@ -161,7 +163,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="size-12"
+            class="size-8"
           >
             <path
               stroke-linecap="round"
@@ -170,7 +172,7 @@
             />
           </svg>
 
-          <span class="text-xl">Kurse</span>
+          <span class="text-md">Kurse</span>
         </a>
 
         {% if user.is_authenticated %}
@@ -185,7 +187,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="size-12"
+            class="size-8"
           >
             <path
               stroke-linecap="round"
@@ -194,7 +196,7 @@
             />
           </svg>
 
-          <span class="text-xl">Mein Konto</span>
+          <span class="text-md">Mein Konto</span>
         </a>
         {% else %}
         <!-- Account Icon (Center) not logged in -->
@@ -208,7 +210,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="size-12"
+            class="size-8"
           >
             <path
               stroke-linecap="round"
@@ -217,7 +219,7 @@
             />
           </svg>
 
-          <span class="text-xl">Mein Konto</span>
+          <span class="text-md">Mein Konto</span>
         </a>
         {% endif %}
 
@@ -231,7 +233,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="size-12"
+            class="size-8"
           >
             <path
               stroke-linecap="round"
@@ -240,13 +242,13 @@
             />
           </svg>
 
-          <span class="text-xl">Über uns</span>
+          <span class="text-md">Über uns</span>
         </a>
       </div>
     </nav>
 
     <!-- Main content -->
-    <div class="container mx-auto p-6 sm:mb-24">
+    <div class="container mx-auto p-6 mb-24 md:mb-0">
       {% block content %}
       <!-- Content goes here -->
       {% endblock %}

@@ -1,13 +1,15 @@
 {% load static %}
 <div
   id="pruchase-credits"
-  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-gray-100 min-w-[90%] md:min-w-[70%] p-16 rounded-lg"
+  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-gray-100 max-w-[90%] md:min-w-[70%] p-16 rounded-lg"
   x-data="{ selected: ''}"
 >
-  <p class="text-2xl font-bold text-[#00df9a] mb-8">Wähle die Anzahl...</p>
+  <p class="text-lg md:text-2xl font-bold text-[#00df9a] mb-8">
+    Wähle die Anzahl...
+  </p>
   <div class="flex items-center justify-between">
     <button
-      class="border-2 border-black rounded-xl p-8 m-8 text-black text-2xl font-bold transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
+      class="border-2 border-black rounded-xl p-4 md:p-8 min-w-[120px] text-black md:text-2xl font-bold transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
       :class="selected == 1 ? 'border-8 border-[#FFD700]' : ''"
       @click="selected=1"
     >
@@ -15,7 +17,7 @@
       <p class="text-sm text-center font-normal pt-4">CHF 25 pro Credit</p>
     </button>
     <button
-      class="bg-[#e46aeb] rounded-xl p-8 m-8 text-black text-2xl font-bold transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
+      class="bg-[#e46aeb] rounded-xl p-4 md:p-8 min-w-[120px] text-black md:text-2xl font-bold transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
       :class="selected == 5 ? 'border-8 border-[#FFD700]' : ''"
       @click="selected=5"
     >
@@ -23,7 +25,7 @@
       <p class="text-sm text-center font-normal pt-4">CHF 24 pro Credit</p>
     </button>
     <button
-      class="bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl p-8 m-8 text-black text-2xl font-bold transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
+      class="bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl p-4 md:p-8 min-w-[120px] text-black md:text-2xl font-bold transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
       :class="selected == 10 ? 'border-8 border-[#FFD700]' : ''"
       @click="selected=10"
     >
