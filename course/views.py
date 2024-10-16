@@ -2,6 +2,7 @@ from typing import Any
 from django.shortcuts import render, get_object_or_404
 from course.models import Courses, Booking
 from users.models import Credits
+from django.contrib.auth.models import User
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -170,3 +171,16 @@ def cancel_booking(request):
     }
         
     return render(request, 'partials/course_list.html', context)
+
+def show_attendees(request):
+    course_id = request.GET.get('course_id')
+    
+    # Get the specific course by primary key (or return 404 if not found)
+    course = get_object_or_404(Courses, pk=course_id)
+    
+    # Get all users who have a booking for this course
+    attendees = User.objects.filter(booking__course=course)
+    
+    context =  {'attendees': attendees}
+    
+    return render(request, 'partials/course_attendees.html', context)

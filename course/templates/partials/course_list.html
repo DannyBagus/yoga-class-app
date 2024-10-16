@@ -22,15 +22,32 @@
         </p>
         <p class="mx-auto text-sm md:text-md">{{ course.name }}</p>
         <p class="mx-auto pb-8 text-sm md:text-md">
-          {{ course.formatted_date }} - {{ course.formatted_time }}
+          {{ course.formatted_date }} @ {{ course.formatted_time }}
         </p>
         <div class="flex items-center justify-center gap-4 pb-8">
+          {% if course.capacity == 0 %}
           <div
-            class="bg-[#e46aeb] p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto"
+            class="bg-slate-300 p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto cursor-pointer"
+            hx-trigger="click"
+            hx-get="{% url 'show-attendees' %}?course_id={{ course.pk }}"
+            hx-target="#attendees-list"
+            hx-swap="innerHTML"
+            @click="showAttendees=true"
+          >
+            Ausgebucht
+          </div>
+          {% else %}
+          <div
+            class="bg-[#e46aeb] p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto cursor-pointer"
+            hx-trigger="click"
+            hx-get="{% url 'show-attendees' %}?course_id={{ course.pk }}"
+            hx-target="#attendees-list"
+            hx-swap="innerHTML"
+            @click="showAttendees=true"
           >
             {{ course.capacity }} Plätze
           </div>
-          {% if course.pk in booked_courses %}
+          {% endif %} {% if course.pk in booked_courses %}
           <button
             class="bg-[#f24444] p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
             hx-get="{% url 'cancel-booking' %}?course={{ course.pk }}"
@@ -58,6 +75,12 @@
   </div>
 </div>
 {% endif %}
+
+<div
+  id="attendees-list"
+  x-show="showAttendees"
+  @click.outside="showAttendees = false"
+></div>
 
 <section id="messages" hx-swap-oob="true" hx-swap="innerHTML">
   {% include 'partials/toast.html' %}
