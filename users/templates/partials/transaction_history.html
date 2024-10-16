@@ -75,25 +75,25 @@
         :class=" displayInvoice=='invoice-{{ pt.pk }}' ? '' : 'hidden' "
       >
         {% if pt.number == 1 %}
-        <td colspan="3">
+        <td colspan="4">
           <img
-            class="w-full"
+            class="w-full md:max-w-[50%] md:mx-auto"
             src="{% static 'users/images/QR_1_Credit_compact.png' %}"
             alt="invoice-1-credit"
           />
         </td>
         {% elif pt.number == 5 %}
-        <td colspan="3">
+        <td colspan="4">
           <img
-            class="w-full"
+            class="w-full md:max-w-[50%] md:mx-auto"
             src="{% static 'users/images/QR_5_Credits_compact.png' %}"
             alt="invoice-5-credits"
           />
         </td>
         {% elif pt.number == 10 %}
-        <td colspan="3">
+        <td colspan="4">
           <img
-            class="w-full"
+            class="w-full md:max-w-[50%] md:mx-auto"
             src="{% static 'users/images/QR_10_Credits_compact.png' %}"
             alt="invoice-10-credits"
           />
