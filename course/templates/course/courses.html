@@ -1,6 +1,9 @@
 {% extends 'core/base.html' %} {% block content %} {% load static %}
 
-<div class="text-white" x-data="{ showAttendees: false }">
+<div
+  class="text-white"
+  x-data="{ showAttendees: false, authenticated: {{ user.is_authenticated|lower }} }"
+>
   <div
     id="header"
     class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"

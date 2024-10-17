@@ -32,7 +32,7 @@
             hx-get="{% url 'show-attendees' %}?course_id={{ course.pk }}"
             hx-target="#attendees-list"
             hx-swap="innerHTML"
-            @click="showAttendees=true"
+            @click="if(!authenticated) return; showAttendees = true"
           >
             Ausgebucht
           </div>
@@ -43,7 +43,7 @@
             hx-get="{% url 'show-attendees' %}?course_id={{ course.pk }}"
             hx-target="#attendees-list"
             hx-swap="innerHTML"
-            @click="showAttendees=true"
+            @click="if(!authenticated) return; showAttendees = true"
           >
             {{ course.capacity }} Plätze
           </div>

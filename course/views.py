@@ -77,28 +77,32 @@ def create_booking(request):
         course = Courses.objects.filter(pk=course_id).first()
         if course:
             if request.user.is_authenticated:
-                try:
-                    # Get user's credits
-                    user_credits = Credits.objects.get(user=request.user)
-                    
-                    if user_credits.number > 0:
-                        # Reduce credits by 1
-                        user_credits.number -= 1
-                        user_credits.save()
-
-                        # Create the booking
-                        Booking.objects.get_or_create(user=request.user, course=course)
+                if course.capacity == 0:
+                    # Course is fully booked, show error message
+                    messages.error(request, "Der Kurs ist bereits ausgebucht.")
+                else:
+                    try:
+                        # Get user's credits
+                        user_credits = Credits.objects.get(user=request.user)
                         
-                        # Reduce course capacity
-                        course.capacity = max(course.capacity - 1, 0)
-                        course.save()
-                        messages.success(request, f"Buchung erfolgreich. Du hast {user_credits.number} Credit(s) übrig.")
-                    else:
-                        # Handle no credits
-                        messages.error(request, "Du hast nicht genügend Credits.")
-                
-                except Credits.DoesNotExist:
-                    messages.error(request, "Du hast noch keine Credits gekauft.")
+                        if user_credits.number > 0:
+                            # Reduce credits by 1
+                            user_credits.number -= 1
+                            user_credits.save()
+
+                            # Create the booking
+                            Booking.objects.get_or_create(user=request.user, course=course)
+                            
+                            # Reduce course capacity
+                            course.capacity = max(course.capacity - 1, 0)
+                            course.save()
+                            messages.success(request, f"Buchung erfolgreich. Du hast {user_credits.number} Credit(s) übrig.")
+                        else:
+                            # Handle no credits
+                            messages.error(request, "Du hast nicht genügend Credits.")
+                    
+                    except Credits.DoesNotExist:
+                        messages.error(request, "Du hast noch keine Credits gekauft.")
     
     courses = Courses.upcoming_courses.upcoming()
     
@@ -116,6 +120,7 @@ def create_booking(request):
     }
         
     return render(request, 'partials/course_list.html', context)
+
 
 
 def cancel_booking(request):
