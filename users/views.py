@@ -142,6 +142,9 @@ def news_item(request):
 def gtc_full(request):
     return render(request, 'users/gtc_base.html')
 
+def dsg(request):
+    return render(request, 'users/dsg.html')
+
 def purchase_credits(request):
     user = request.user
     

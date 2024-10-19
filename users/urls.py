@@ -9,5 +9,6 @@ urlpatterns = [
     path('mein-konto/', views.my_account, name='my-account'),
     path('news/', views.news_item, name='news-item'),
     path('purchase-credits/', views.purchase_credits, name='confirm-purchase'),
-    path('agb/', views.gtc_full, name='gtc-full')
+    path('agb/', views.gtc_full, name='gtc-full'),
+    path('dsg/', views.dsg, name='dsg')
 ]
