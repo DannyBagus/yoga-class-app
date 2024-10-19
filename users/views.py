@@ -56,17 +56,17 @@ def login_user(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        next = request.POST.get('next', '/')
+        next = request.POST.get('next', None)  # Get next or None if not present
         if user is not None:
             login(request, user)
             if next:
                 return redirect(next)
             else:
-                return redirect('home')
+                return redirect('my-account')
             
         else:
-            messages.success(request, ("Du konntest nicht angemeldet werden. Versuche es erneut..."))
-            return redirect('users:login')
+            messages.error(request, ("Du konntest nicht angemeldet werden. Versuche es erneut..."))
+            return redirect('login')
     else:
         form = CustomAuthenticateForm()
         

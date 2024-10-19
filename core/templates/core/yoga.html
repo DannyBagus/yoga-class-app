@@ -1,0 +1,148 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+
+<div class="text-white">
+  <!-- Header Section -->
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-xl md:text-3xl text-[#00df9a]">Schwangerschaftsyoga</p>
+  </div>
+
+  <!-- Accordion Section -->
+  <div class="max-w-[800px] mx-auto mt-8 p-4">
+    <!-- Accordion Container -->
+    <div x-data="{ active: 1 }" class="space-y-4">
+      <!-- Section 1 -->
+      <div>
+        <button
+          @click="active === 1 ? active = -1 : active = 1"
+          class="w-full text-left py-4 px-6 bg-[#00df9a] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Was beinhalten die Kurse
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 1" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 1"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <p>
+            Yoga kann Dich während der Schwangerschaft sowohl auf körperlicher
+            als auch auf mentaler Ebene unterstützen. In den Kursen lernst Du
+            deinen sich durch die Schwangerschaft stetig verändernden Körper
+            kennen. Welche Asanas (Körperstellungen) förderlich und welche
+            hinderlich für diesen Veränderungsprozess sein können wird Dir mit
+            auf den Weg gegeben. Eine regelmässige Yogapraxis ermöglicht es Dir,
+            dich mit deinem Körper zu verbinden, Stärke und Vertrauen in ihn zu
+            gewinnen und gleichzeitig Entspannung zu finden. All diese
+            Komponenten unterstützen dich während der Schwangerschaft, der
+            Geburt und auch im Wochenbett.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div>
+        <button
+          @click="active === 2 ? active = -1 : active = 2"
+          class="w-full text-left py-4 px-6 bg-[#e46aeb] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Körperliche Vorteile von Schwangerschaftsyoga
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 2" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 2"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <ul class="list-disc px-2">
+            <li>Löst körperliche Verspannungen</li>
+            <li>Fördert die Durchblutung</li>
+            <li>Stärkt den Beckenboden und die Muskeln sanft</li>
+            <li>Verbindet mit dem Atem</li>
+            <li>Zeigt körperliche Grenzen und Möglichkeiten auf</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div>
+        <button
+          @click="active === 3 ? active = -1 : active = 3"
+          class="w-full text-left py-4 px-6 bg-[#00df9a] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Mentale Vorteile von Schwangerschaftsyoga
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 3" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 3"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <ul class="list-disc px-2">
+            <li>Kann mentale Blockaden und Ängste lösen</li>
+            <li>Schenkt Selbstvertrauen in deinen Körper</li>
+            <li>
+              Fördert die Entspannung, entschleunigt und hilft Stress abzubauen
+            </li>
+            <li>Verbindet mit dem Baby</li>
+            <li>Bereitet auf die Geburt vor</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div>
+        <button
+          @click="active === 4 ? active = -1 : active = 4"
+          class="w-full text-left py-4 px-6 bg-[#e46aeb] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Inhalte Schwangerschaftsyoga
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 4" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 4"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <ul class="list-disc px-2">
+            <li>Asanas auf die Schwangerschaft angepasst</li>
+            <li>Balance zwischen Kräftigung und Entspannung des Körpers</li>
+            <li>Pranayama – Atemübungen für die Schwangerschaft & Geburt</li>
+            <li>
+              Kennenlernen der eigenen Anatomie besonders des Beckenbodens
+            </li>
+            <li>Geburtsvorbereitende Themen</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 5 -->
+      <div>
+        <button
+          @click="active === 5 ? active = -1 : active = 5"
+          class="w-full text-left py-4 px-6 bg-[#00df9a] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Wer kann teilnehmen
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 5" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 5"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <p>
+            Die Yogapraxis ist grundsätzlich für alle Schwangerschaftswochen
+            geeignet. Bist du im ersten Trimester (<12 Schwangerschaftswoche)
+            und fühlst dich müde, leidest an Übelkeit und oder Erbrechen, ist
+            geraten im zweiten Trimester einzusteigen. Du brauchst keine
+            Yogaerfahrung um teilnehmen zu können.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

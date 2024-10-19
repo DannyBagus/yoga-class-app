@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+
+<div class="text-white">
+  <!-- Header Section -->
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-xl md:text-3xl text-[#00df9a]">Impressum</p>
+  </div>
+
+  <!-- Impressum -->
+  <div class="max-w-[1200px] w-full flex flex-col justify-center">
+    <p class="font-bold">Mileja GmbH</p>
+    <p>Rittergasse 20, 4051 Basel, Schweiz</p>
+    <br />
+    <div class="flex">
+      <p class="font-bold pr-2">E-Mail:</p>
+      <p>admin@mileja.ch</p>
+    </div>
+    <div class="flex">
+      <p class="font-bold pr-2">Telefon:</p>
+      <p>+41 79 471 61 84</p>
+    </div>
+    <div class="flex">
+      <p class="font-bold pr-2">Internet:</p>
+      <p>www.mileja.ch</p>
+    </div>
+    <br />
+    <p class="font-bold">Vertretungsberechtigte Personen:</p>
+    <p>Mileja GmbH</p>
+    <br />
+    <div class="flex">
+      <p class="font-bold pr-2">UID:</p>
+      <p>CHE-170.569.062</p>
+    </div>
+  </div>
+
+  {% endblock %}
+</div>

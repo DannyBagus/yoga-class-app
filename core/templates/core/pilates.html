@@ -1,0 +1,146 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+
+<div class="text-white">
+  <!-- Header Section -->
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-xl md:text-3xl text-[#00df9a]">
+      Pilates vor und nach der Geburt
+    </p>
+  </div>
+
+  <!-- Accordion Section -->
+  <div class="max-w-[800px] mx-auto mt-8 p-4">
+    <!-- Accordion Container -->
+    <div x-data="{ active: 1 }" class="space-y-4">
+      <!-- Section 1 -->
+      <div>
+        <button
+          @click="active === 1 ? active = -1 : active = 1"
+          class="w-full text-left py-4 px-6 bg-[#00df9a] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Vor der Geburt
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 1" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 1"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <p>
+            Während der Schwangerschaft werden die Bauch- und Beckenbodenmuskeln
+            sowie die Bänder stark gedehnt und beansprucht. Durch den wachsenden
+            Bauch verschiebt sich das Körperzentrum, was Auswirkungen auf die
+            Körperhaltung hat und somit Beschwerden wie Rückenschmerzen mit sich
+            bringt. Durch sanfte Übungen werden Dein Beckenboden und Deine tiefe
+            Rumpfmuskulatur besser durchblutet und gestärkt, wodurch Du in
+            Deinem Körperzentrum mehr Stabilität gewinnst und Deine
+            Körperhaltung optimiert wird. Damit können Beschwerden wie
+            Rückenschmerzen, Inkontinenz und Verspannungen des Schultergürtels
+            vermindert werden. In der Schwangerschaft ist dein Körper in
+            ständigem Wandel. Durch regelmässiges Training wirst Du eine bessere
+            Körperwahrnehmung erreichen, was für den Geburtsprozess sehr
+            wertvoll ist. Mobilisationen und Dehnungen der Hüfte schaffen Platz
+            im Becken und bereiten Dich optimal auf die Geburt vor. Das Training
+            beinhaltet ebenfalls Atem- und Entspannungsübungen, welche Dir
+            helfen Dich mit Deinem Baby zu verbinden, innere Ruhe zu finden und
+            dich ebenfalls unter der Geburt unterstützen können.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div>
+        <button
+          @click="active === 2 ? active = -1 : active = 2"
+          class="w-full text-left py-4 px-6 bg-[#e46aeb] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Voraussetzungen
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 2" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 2"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <ul class="list-disc px-2">
+            <li>
+              Du befindest dich im 2. Und 3. Trimenon deiner Schwangerschaft
+              (13. Schwangerschaftswoche bis Geburt)
+            </li>
+            <li>
+              Dein Frauenarzt/deine Frauenärztin hat dir das Training in der
+              Schwangerschaft erlaubt
+            </li>
+            <li>
+              Du hast keine Schwangerschaftskomplikationen wie z.B. Blutungen,
+              Plazenta praevia, vorzeitige Wehen, Zervixverkürzung
+            </li>
+            <li>Keine Vorkenntnisse nötig</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div>
+        <button
+          @click="active === 3 ? active = -1 : active = 3"
+          class="w-full text-left py-4 px-6 bg-[#00df9a] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Nach der Geburt
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 3" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 3"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <p>
+            Viele Frauen stellen sich die Frage «wie weiter nach dem
+            Rückbildungskurs?». Du suchst einen Kurs, in welchem Du Deinen
+            Körper nach dem Rückbildungskurs weiter trainieren kannst und
+            welcher Dir hilft eine sportliche Routine zu entwickeln. Dann bist
+            Du in diesem Kurs genau richtig. Im Anschluss an den
+            Rückbildungskurs werden Deine tiefen Rumpfmuskeln und Dein
+            Beckenboden mit Hilfe eines ganzheitlichen und funktionellen
+            Training auf Basis von Pilates weiter gestärkt, um eine starke
+            Körpermitte zu erreichen. Zudem soll Dein Herz-Kreislauf-System mit
+            Hilfe von dynamischen Übungen und kurzen Cardiosequenzen aktiviert
+            werden. Das Ziel des Trainings ist es Deinen Körper ganzheitlich
+            aufzubauen und Dich fit für grössere sportliche Belastungen und den
+            Alltag mit Kind zu machen.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div>
+        <button
+          @click="active === 4 ? active = -1 : active = 4"
+          class="w-full text-left py-4 px-6 bg-[#e46aeb] text-white font-bold rounded-md flex justify-between items-center uppercase"
+        >
+          Voraussetzungen
+          <!-- Plus Icon for collapsed state -->
+          <span x-show="active !== 4" class="text-xl font-bold">+</span>
+        </button>
+        <div
+          x-show="active === 4"
+          class="p-6 bg-gray-800 rounded-md mt-2 text-gray-200"
+        >
+          <ul class="list-disc px-2">
+            <li>
+              Abgeschlossener Rückbildungskurs bei Mileja oder externen
+              Anbietern
+            </li>
+            <li>Wahrnehmung/Ansteuerung des Beckenbodens ist möglich</li>
+            <li>Die Geburt ist mind. 12 Wochen her</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

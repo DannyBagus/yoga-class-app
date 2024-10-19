@@ -87,25 +87,154 @@
     </div>
   </div>
 
-  <div id="content">
-    <div class="w-full bg-white py-8 px-4">
-      <div class="max-w-[1240px] mx-auto grid md:grid-cols-2">
-        <img
-          class="w-[500px] mx-auto my-4"
-          src="{% static 'core/images/ss_yoga.jpg' %}"
-          alt="/"
-        />
-        <div class="flex flex-col justify-center items-center">
-          <a href="{% url 'courses' %}">
-            <button
-              class="bg-black w-[200px] text-[#e46aeb] rounded-md font-medium my-6 mx-auto py-3"
-            >
-              Zur Kursübersicht
+  <!-- Slider Section -->
+  <div
+    x-data="{ currentSlide: 0 }"
+    class="max-w-[1240px] mx-auto pb-12 text-black"
+  >
+    <h1
+      class="text-3xl font-bold py-6 bg-white text-black text-center rounded-xl uppercase mb-4"
+    >
+      Wie es funktioniert
+    </h1>
+
+    <!-- Slider Container -->
+    <div class="relative overflow-hidden">
+      <!-- Desktop View: Three cards side by side -->
+      <div class="hidden md:flex justify-between space-x-4">
+        <!-- Card 1 -->
+        <div
+          class="bg-[#00df9a] max-w-[32%] rounded-lg shadow-lg p-4 flex flex-col items-center"
+        >
+          <img
+            class="w-[200px] h-[200px] mx-auto my-4 object-cover"
+            src="{% static 'core/images/register.jpg' %}"
+            alt="Register Image"
+          />
+          <p class="text-xl font-bold">Registriere Dich!</p>
+          <p class="text-md text-center p-4">
+            Solltest Du noch kein Konto haben, registriere Dich jetzt mit Deiner
+            E-Mail Adresse.
+          </p>
+          <a href="{% url 'register' %}" class="justify-center items-center">
+            <button class="bg-white p-4 rounded-xl font-bold mt-2">
+              Registrieren
+            </button>
+          </a>
+        </div>
+
+        <!-- Card 2 -->
+        <div
+          class="bg-[#00df9a] max-w-[32%] rounded-lg shadow-lg p-4 flex flex-col items-center"
+        >
+          <img
+            class="w-[200px] h-[200px] mx-auto my-4 object-cover"
+            src="{% static 'core/images/coins.jpg' %}"
+            alt="Credits Image"
+          />
+          <p class="text-xl font-bold">Credits</p>
+          <p class="text-md text-center p-4">
+            Um Dich in die Kurse einzuschreiben, benötigst Du Credits. Pro Kurs
+            wird 1 Credit belastet. Unter dem Abschnitt "Mein Konto" kannst Du
+            ganz einfach zwischen 1, 5 und 10 Credits wählen.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div
+          class="bg-[#00df9a] max-w-[32%] rounded-lg shadow-lg p-4 flex flex-col items-center"
+        >
+          <img
+            class="w-[200px] h-[200px] mx-auto my-4 object-cover"
+            src="{% static 'core/images/ss_yoga.jpg' %}"
+            alt="Book Courses Image"
+          />
+          <p class="text-xl font-bold">Buche Deine Kurse</p>
+          <p class="text-md text-center p-4">
+            Stöbere durch unser Kursangebot und schreibe Dich in die Kurse
+            deiner Wahl ein!
+          </p>
+          <a href="{% url 'courses' %}" class="justify-center items-center">
+            <button class="bg-white p-4 rounded-xl font-bold mt-2">
+              Kursübersicht
+            </button>
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile View: Swipeable cards -->
+      <div
+        class="md:hidden flex space-x-4 overflow-x-scroll snap-x snap-mandatory"
+        @touchstart="startX = $event.touches[0].pageX"
+        @touchmove="moveX = $event.touches[0].pageX"
+        @touchend="currentSlide = startX > moveX ? (currentSlide < 2 ? currentSlide + 1 : 0) : (currentSlide > 0 ? currentSlide - 1 : 2)"
+      >
+        <!-- Card 1 -->
+        <div
+          class="max-w-[90%] bg-[#00df9a] rounded-lg shadow-lg p-4 snap-center flex-shrink-0 flex flex-col items-center"
+        >
+          <img
+            class="w-[200px] h-[200px] mx-auto my-4 object-cover"
+            src="{% static 'core/images/register.jpg' %}"
+            alt="Register Image"
+          />
+          <p class="text-xl text-center font-bold">Registriere Dich!</p>
+          <p class="text-md text-center p-4">
+            Solltest Du noch kein Konto haben, registriere Dich jetzt mit Deiner
+            E-Mail Adresse.
+          </p>
+          <a href="{% url 'register' %}" class="justify-center items-center">
+            <button class="bg-white p-4 rounded-xl font-bold mt-2">
+              Registrieren
+            </button>
+          </a>
+        </div>
+
+        <!-- Card 2 -->
+        <div
+          class="max-w-[90%] bg-[#00df9a] rounded-lg shadow-lg p-4 snap-center flex-shrink-0 flex flex-col items-center"
+        >
+          <img
+            class="w-[200px] h-[200px] mx-auto my-4 object-cover"
+            src="{% static 'core/images/coins.jpg' %}"
+            alt="Credits Image"
+          />
+          <p class="text-xl text-center font-bold">Credits</p>
+          <p class="text-md text-center p-4">
+            Um Dich in die Kurse einzuschreiben, benötigst Du Credits. Pro Kurs
+            wird 1 Credit belastet. Unter dem Abschnitt "Mein Konto" kannst Du
+            ganz einfach zwischen 1, 5 und 10 Credits wählen. Nach Einzahlung
+            mittels angezeigtem QR-Einzahlungsschein werden wir Dir die Credits
+            umgehend gutschreiben.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div
+          class="max-w-[90%] bg-[#00df9a] rounded-lg shadow-lg p-4 snap-center flex-shrink-0 flex flex-col items-center"
+        >
+          <img
+            class="w-[200px] h-[200px] mx-auto my-4 object-cover"
+            src="{% static 'core/images/ss_yoga.jpg' %}"
+            alt="Book Courses Image"
+          />
+          <p class="text-xl text-center font-bold">Buche Deine Kurse</p>
+          <p class="text-md text-center p-4">
+            Stöbere durch unser Kursangebot und schreibe Dich in die Kurse
+            deiner Wahl ein!
+          </p>
+          <a href="{% url 'courses' %}" class="justify-center items-center">
+            <button class="bg-white p-4 rounded-xl font-bold mt-2">
+              Kursübersicht
             </button>
           </a>
         </div>
       </div>
     </div>
+  </div>
+
+  <div id="impressum" class="flex justify-center items-center">
+    <a href="{% url 'impressum' %}">Impressum</a>
   </div>
 </div>
 {% endblock %}
