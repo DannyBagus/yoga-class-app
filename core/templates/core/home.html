@@ -23,7 +23,7 @@
     </h1>
     <div>
       {% if user.is_authenticated %}
-      <a href="{% url 'courses' %}">
+      <a href="#manual">
         <button
           class="bg-[#e46aeb] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black"
         >
@@ -31,7 +31,7 @@
         </button>
       </a>
       {% else %}
-      <a href="{% url 'login' %}">
+      <a href="#manual">
         <button
           class="bg-[#e46aeb] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black"
         >
@@ -89,13 +89,14 @@
 
   <!-- Slider Section -->
   <div
+    id="manual"
     x-data="{ currentSlide: 0 }"
     class="max-w-[1240px] mx-auto pb-12 text-black"
   >
     <h1
       class="text-3xl font-bold py-6 bg-white text-black text-center rounded-xl uppercase mb-4"
     >
-      Wie es funktioniert
+      So funktioniert's!
     </h1>
 
     <!-- Slider Container -->
