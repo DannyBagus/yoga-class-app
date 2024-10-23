@@ -1,7 +1,7 @@
 from typing import Any
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -28,4 +28,21 @@ class CustomAuthenticateForm(AuthenticationForm):
         self.fields['username'].widget.attrs['class'] = "text-black rounded-xl m-4 p-4 w-[90%]"
         self.fields['password'].widget.attrs['class'] = "text-black rounded-xl m-4 p-4 w-[90%]"
         
+class CustomPasswordResetForm(PasswordResetForm):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({
+            'class': 'text-black rounded-xl m-4 p-4 w-[90%]',
+            'placeholder': 'Deine E-Mail Adresse',
+        })
         
+class CustomSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['new_password1'].widget.attrs.update({
+            'class': 'text-black rounded-xl m-4 p-4 w-[90%]',
+        })
+        self.fields['new_password2'].widget.attrs.update({
+            'class': 'text-black rounded-xl m-4 p-4 w-[90%]',
+        })

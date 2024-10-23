@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
@@ -86,7 +87,27 @@ def activate(request, uidb64, token):
         return render(request, 'users/confirmation_successful.html')
     else:
         return render(request, 'users/activation_invalid.html')
-    
+
+class CustomPasswordResetView(PasswordResetView):
+    html_email_template_name = "users/password_reset_email.html"
+    subject_template_name = "registration/password_reset_subject.txt"
+
+    def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None, **kwargs):
+        subject = render_to_string(subject_template_name, context)
+        subject = ''.join(subject.splitlines())  # Remove newlines
+
+        # Render your HTML email template
+        message = render_to_string(html_email_template_name or email_template_name, context)
+
+        # Send the email
+        send_mail(
+            subject,
+            '',  # No plain text message since we're using HTML
+            from_email,
+            [to_email],
+            fail_silently=False,
+            html_message=message  # Use the rendered HTML
+        )
     
 def my_account(request):
     nav_content = request.GET.get('navigate')

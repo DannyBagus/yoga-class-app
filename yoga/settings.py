@@ -156,6 +156,8 @@ EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = env('EMAIL_USE_SSL')
+DEFAULT_FROM_EMAIL = 'admin@mileja.ch'
+SERVER_EMAIL = 'admin@mileja.ch'
 
 # default date input format
 DATE_INPUT_FORMATS = ['%d.%m.%Y']
