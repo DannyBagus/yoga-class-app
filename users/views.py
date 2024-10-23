@@ -34,7 +34,7 @@ def register_view(request):
             to_email = form.cleaned_data.get('email')
             send_mail(
                 mail_subject, 
-                'body', 
+                f'Hallo {user}', 
                 'admin@mileja.ch', 
                 [to_email],
                 fail_silently=False,
@@ -167,9 +167,9 @@ def purchase_credits(request):
     })
     send_mail(
         mail_subject, 
-        'body', 
+        f'{user} hat {number} Credits gekauft. Stelle sicher, dass die Zahlung eingagangen ist, bevor Du die Kauftransaktion abschliesst.', 
         'admin@mileja.ch', 
-        ['admin@mileja.ch'],
+        ['admin@mileja.ch', 'hebammen@mileja.ch', 'buchhaltung@mileja.ch'],
         fail_silently=False,
         html_message=message
     )
