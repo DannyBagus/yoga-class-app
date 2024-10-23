@@ -8,6 +8,8 @@ services:
     ports:
       - 8020:8020
     image: yoga-app:yoga-app
+    depends_on:
+      - yoga-db
     networks:
       - "daniel_default"
     labels:
@@ -21,6 +23,23 @@ services:
       traefik.http.services.yoga-app.loadbalancer.server.port: "8020"
       traefik.http.services.yoga-app.loadbalancer.server.scheme: "http"
     container_name: yoga-app
+
+  yoga-db:
+    image: mysql:8.0
+    restart: always
+    networks:
+      - "daniel_default"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    container_name: yoga-db
+
+volumes:
+  db_data:
 
 networks:
   daniel_default:
