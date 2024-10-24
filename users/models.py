@@ -17,7 +17,7 @@ class Credits(models.Model):
         verbose_name_plural = ("Credits")
 
     def __str__(self):
-        return f"{self.user}: {self.number}"
+        return f"{self.user.first_name} {self.user.last_name}: {self.number}"
     
 # Signal to create a Credits entry when a new User is created
 @receiver(post_save, sender=User)
@@ -57,7 +57,7 @@ class PurchaseTransaction(models.Model):
         verbose_name_plural = ("Kauftransaktionen")
         
     def __str__(self) -> str:
-        return f"{self.date}: {self.user} ({self.number} Credits) - {self.status.upper()}"
+        return f"{self.date}: {self.user.first_name} {self.user.last_name} ({self.number} Credits) - {self.status.upper()}"
     
 # Signal handler to update or create Credits entry when a PurchaseTransaction is saved
 @receiver(post_save, sender=PurchaseTransaction)
