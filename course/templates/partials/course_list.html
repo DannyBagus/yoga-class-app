@@ -11,8 +11,13 @@
           alt="Yoga"
           class="mb-4"
         />
-        {% else %}<img
+        {% elif course.category.id == 2 %}<img
           src="{% static 'core/images/pilates_ss.jpg' %}"
+          alt="Pilates"
+          class="mb-4"
+        />
+        {% elif course.category.id == 3 %}<img
+          src="{% static 'core/images/rektusdiastase.jpg' %}"
           alt="Pilates"
           class="mb-4"
         />
@@ -28,23 +33,27 @@
           {% if course.capacity == 0 %}
           <div
             class="bg-slate-300 p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto cursor-pointer"
+          >
+            <!--
             hx-trigger="click"
             hx-get="{% url 'show-attendees' %}?course_id={{ course.pk }}"
             hx-target="#attendees-list"
             hx-swap="innerHTML"
             @click="if(!authenticated) return; showAttendees = true"
-          >
+            -->
             Ausgebucht
           </div>
           {% else %}
           <div
             class="bg-[#e46aeb] p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto cursor-pointer"
+          >
+            <!--
             hx-trigger="click"
             hx-get="{% url 'show-attendees' %}?course_id={{ course.pk }}"
             hx-target="#attendees-list"
             hx-swap="innerHTML"
             @click="if(!authenticated) return; showAttendees = true"
-          >
+            -->
             {{ course.capacity }} Plätze
           </div>
           {% endif %} {% if course.pk in booked_courses %}

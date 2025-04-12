@@ -17,22 +17,39 @@
     x-data="{ selected: '' }"
   >
     <p class="text-xl md:text-3xl text-[#00df9a] md:mr-8 pb-4">Filter:</p>
-    <div id="buttons" class="flex space-x-4 justify-cener items-center text-md">
+    <div
+      id="buttons"
+      class="flex flex-wrap justify-center items-center gap-4 text-md"
+    >
+      <!-- First row: "Alle Kurse" and "Meine Kurse" -->
       <button
         hx-get="{% url 'filter-courses' %}?filter="
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-2 md:p-4"
+        class="rounded-xl p-2 md:p-4 w-full sm:w-auto sm:max-w-[200px]"
         @click="selected = ''"
         :class="selected == '' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
         Alle Kurse
       </button>
+      {% if user.is_authenticated %}
+      <button
+        hx-get="{% url 'filter-courses' %}?filter=my_courses"
+        hx-target="#courses-list"
+        hx-swap="innerHTML"
+        class="rounded-xl p-2 md:p-4 w-full sm:w-auto sm:max-w-[200px]"
+        @click="selected = 'my_courses'"
+        :class="selected == 'my_courses' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
+      >
+        Meine Kurse
+      </button>
+      {% endif %}
+      <!-- Second row: "Yoga", "Pilates", "Rektusdiastase" -->
       <button
         hx-get="{% url 'filter-courses' %}?filter=yoga"
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-2 md:p-4"
+        class="rounded-xl p-2 md:p-4 w-full sm:w-auto sm:max-w-[200px]"
         @click="selected = 'yoga'"
         :class="selected == 'yoga' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
@@ -42,24 +59,22 @@
         hx-get="{% url 'filter-courses' %}?filter=pilates"
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-2 md:p-4"
+        class="rounded-xl p-2 md:p-4 w-full sm:w-auto sm:max-w-[200px]"
         @click="selected = 'pilates'"
         :class="selected == 'pilates' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
         Pilates
       </button>
-      {% if user.is_authenticated %}
       <button
-        hx-get="{% url 'filter-courses' %}?filter=my_courses"
+        hx-get="{% url 'filter-courses' %}?filter=rectusdiastasis"
         hx-target="#courses-list"
         hx-swap="innerHTML"
-        class="rounded-xl p-2 md:p-4"
-        @click="selected = 'my_courses'"
-        :class="selected == 'my_courses' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
+        class="rounded-xl p-2 md:p-4 w-full sm:w-auto sm:max-w-[200px]"
+        @click="selected = 'rectusdiastasis'"
+        :class="selected == 'rectusdiastasis' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
-        Meine Kurse
+        Rektusdiastase
       </button>
-      {% endif %}
     </div>
   </div>
 
