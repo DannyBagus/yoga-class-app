@@ -7,4 +7,5 @@ urlpatterns = [
     path('booking/', create_booking, name="create-booking"),
     path('cancel-booking/', cancel_booking, name="cancel-booking"),
     path('show-attendees/', show_attendees, name="show-attendees"),
+    path('teilnehmer-abfrage/', send_course_reminder, name='send_course_reminder'),
     ]

@@ -1,4 +1,7 @@
 from typing import Any
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
 from course.models import Courses, Booking
 from users.models import Credits
@@ -191,3 +194,48 @@ def show_attendees(request):
     context =  {'attendees': attendees}
     
     return render(request, 'partials/course_attendees.html', context)
+
+def send_course_reminder(request):
+    ''' Send a list of course participants to the course instructor '''
+    # Get the current date
+    today = timezone.now().date()
+    
+    # Find courses that are scheduled for later today
+    courses_today = Courses.objects.filter(date=today)
+    
+    if not courses_today.exists():
+        return HttpResponse('Es findet heute kein Kurs statt.')
+    
+    # Prepare email content
+    for course in courses_today:
+        bookings = Booking.objects.filter(course=course)
+        
+        if bookings.exists():
+            participant_list = [booking.user.get_full_name() or booking.user.username for booking in bookings]
+            
+            # Render HTML template
+            html_message = render_to_string('course/course_reminder.html', {
+                'course': course,
+                'participants': participant_list
+            })
+            
+            # Send email
+            send_mail(
+                subject=f'Teilnehmerliste für den Kurs: {course.name}',
+                message='',
+                html_message=html_message,
+                from_email='admin@mileja.ch',
+                recipient_list=['hebammen@mileja.ch', 'admin@mileja.ch'],
+                fail_silently=False,
+            )
+        else:
+            # If no bookings, send an email informing about it
+            send_mail(
+                subject=f'Keine Buchungen für den Kurs: {course.name}',
+                message=f'Der Kurs "{course.name}" findet heute um {course.start} statt, jedoch sind keine Teilnehmer angemeldet.',
+                from_email='admin@mileja.ch',
+                recipient_list=['hebammen@mileja.ch', 'admin@mileja.ch'],
+                fail_silently=False,
+            )
+    
+    return HttpResponse('Teilnehmerliste wurde erfolgreich versendet.')

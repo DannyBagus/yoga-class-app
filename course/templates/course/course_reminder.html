@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Course Reminder</title>
+  </head>
+  <body>
+    <h2>Teilnehmerliste für den Kurs: {{ course.name }}</h2>
+    <p>Datum: {{ course.date }} | Startzeit: {{ course.start }}</p>
+    <ul>
+      {% for participant in participants %}
+      <li>{{ participant }}</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
