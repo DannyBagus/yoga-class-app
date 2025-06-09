@@ -47,8 +47,8 @@ def filter_courses(request):
         courses = Courses.upcoming_courses.upcoming().filter(category__name='Yoga')
     elif filter_type == 'pilates':
         courses = Courses.upcoming_courses.upcoming().filter(category__name='Pilates')
-    elif filter_type == 'rectusdiastasis':
-        courses = Courses.upcoming_courses.upcoming().filter(category__name='Rektusdiastase')
+    elif filter_type == 'mamifit':
+        courses = Courses.upcoming_courses.upcoming().filter(category__name='MamiFit')
     elif filter_type == 'my_courses':
         courses = Courses.upcoming_courses.upcoming().filter(bookings__user=request.user)
     else:

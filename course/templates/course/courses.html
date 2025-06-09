@@ -66,14 +66,14 @@
         Pilates
       </button>
       <button
-        hx-get="{% url 'filter-courses' %}?filter=rectusdiastasis"
+        hx-get="{% url 'filter-courses' %}?filter=mamifit"
         hx-target="#courses-list"
         hx-swap="innerHTML"
         class="rounded-xl p-2 md:p-4 w-full sm:w-auto sm:max-w-[200px]"
-        @click="selected = 'rectusdiastasis'"
-        :class="selected == 'rectusdiastasis' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
+        @click="selected = 'mamifit'"
+        :class="selected == 'mamifit' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
       >
-        Rektusdiastase
+        MamiFit
       </button>
     </div>
   </div>
