@@ -44,7 +44,6 @@ def create_checkout_session(request):
     )
 
     session = stripe.checkout.Session.create(
-        automatic_payment_methods={'enabled': True},
         line_items=[{'price': price_id, 'quantity': 1}],
         mode='payment',
         success_url=request.build_absolute_uri('/users/checkout/success/') + '?session_id={CHECKOUT_SESSION_ID}',
