@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh] text-white">
+  <div class="bg-white/10 rounded-2xl p-8 md:p-16 text-center max-w-lg">
+    <div class="text-6xl mb-6 text-[#00df9a]">&#10003;</div>
+    <h1 class="text-2xl md:text-3xl font-bold text-[#00df9a] mb-4">
+      Zahlung erfolgreich!
+    </h1>
+    {% if credits_added %}
+    <p class="text-lg mb-2">
+      {{ credits_added }} Credit{{ credits_added|pluralize:"s" }}
+      wurden Deinem Konto gutgeschrieben.
+    </p>
+    {% endif %}
+    <p class="text-[#e46aeb] text-2xl font-bold mb-8">
+      Guthaben: {{ total_credits }} Credits
+    </p>
+    <a href="{% url 'my-account' %}"
+       class="inline-block bg-[#00df9a] text-black font-bold rounded-xl px-8 py-4 hover:scale-105 transition ease-in-out">
+      Zum Konto
+    </a>
+  </div>
+</div>
+{% endblock %}

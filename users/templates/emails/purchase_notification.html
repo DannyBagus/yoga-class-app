@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0; padding:0; background-color:#f5f5f5; font-family:Arial, Helvetica, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f5f5; padding:20px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden;">
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#000300; padding:24px; text-align:center;">
+              <h1 style="color:#e46aeb; margin:0; font-size:22px;">Mileja Yoga &amp; Pilates</h1>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 24px;">
+              <h2 style="color:#333; font-size:18px;">Neuer Credit-Kauf</h2>
+              <table width="100%" cellpadding="8" cellspacing="0" style="border:1px solid #eee; border-radius:8px; margin:16px 0;">
+                <tr style="background-color:#f9f9f9;">
+                  <td style="font-weight:bold; color:#666; width:40%;">Kundin</td>
+                  <td style="color:#333;">{{ user.first_name }} {{ user.last_name }}</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:bold; color:#666;">E-Mail</td>
+                  <td style="color:#333;">{{ user.email }}</td>
+                </tr>
+                <tr style="background-color:#f9f9f9;">
+                  <td style="font-weight:bold; color:#666;">Credits</td>
+                  <td style="color:#333; font-weight:bold;">{{ transaction.number }}</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:bold; color:#666;">Datum</td>
+                  <td style="color:#333;">{{ transaction.date }}</td>
+                </tr>
+                <tr style="background-color:#f9f9f9;">
+                  <td style="font-weight:bold; color:#666;">Status</td>
+                  <td style="color:#00df9a; font-weight:bold;">Bezahlt via Stripe</td>
+                </tr>
+                {% if transaction.stripe_payment_intent_id %}
+                <tr>
+                  <td style="font-weight:bold; color:#666;">Stripe Referenz</td>
+                  <td style="color:#333; font-size:12px;">{{ transaction.stripe_payment_intent_id }}</td>
+                </tr>
+                {% endif %}
+              </table>
+              <p style="font-size:14px; color:#999;">
+                Die Zahlung wurde automatisch verarbeitet. Credits wurden sofort gutgeschrieben.
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#000300; padding:16px 24px; text-align:center;">
+              <p style="color:#999; font-size:12px; margin:0;">
+                Mileja Yoga &amp; Pilates &mdash;
+                <a href="{{ site_url }}" style="color:#e46aeb; text-decoration:none;">kurse.mileja.ch</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

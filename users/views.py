@@ -167,41 +167,6 @@ def dsg(request):
     return render(request, 'users/dsg.html')
 
 def purchase_credits(request):
-    user = request.user
-    
-    # Get the number of credits from the POST data
-    number = request.GET.get('number')
-    
-    # Create a new PurchaseTransaction
-    purchase = PurchaseTransaction(
-        user=request.user,  # Assign the current logged-in user
-        number=number,  # Set the number of credits
-        date=timezone.now()  # Set the transaction date
-    )
-    purchase.save()
-    
-    # send mail to back office
-    mail_subject = 'ACTION REQUIRED: Kauf Credits'
-    message = render_to_string('users/mail_purchase_transaction.html', {
-        'user': user,
-        'number': number
-    })
-    send_mail(
-        mail_subject, 
-        f'{user} hat {number} Credits gekauft. Stelle sicher, dass die Zahlung eingagangen ist, bevor Du die Kauftransaktion abschliesst.', 
-        'admin@mileja.ch', 
-        ['admin@mileja.ch', 'hebammen@mileja.ch', 'buchhaltung@mileja.ch'],
-        fail_silently=False,
-        html_message=message
-    )
-    
-    # render transactions-partials        
-    ''' get purchase history of user'''
-    purchase_transactions = PurchaseTransaction.objects.filter(user=user).order_by('-date')
-
-    context = {
-        "purchase_transactions": purchase_transactions
-    }
-    return render(request, 'partials/transaction_history.html', context)
-    
+    """Legacy-URL: leitet auf Mein Konto weiter (Stripe hat uebernommen)."""
+    return redirect('my-account')
     

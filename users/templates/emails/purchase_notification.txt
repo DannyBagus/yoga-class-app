@@ -1,0 +1,14 @@
+Neuer Credit-Kauf
+
+Kundin: {{ user.first_name }} {{ user.last_name }}
+E-Mail: {{ user.email }}
+Credits: {{ transaction.number }}
+Datum: {{ transaction.date }}
+Status: Bezahlt via Stripe
+{% if transaction.stripe_payment_intent_id %}Stripe Referenz: {{ transaction.stripe_payment_intent_id }}{% endif %}
+
+Die Zahlung wurde automatisch verarbeitet. Credits wurden sofort gutgeschrieben.
+
+--
+Mileja Yoga & Pilates
+{{ site_url }}

@@ -1,0 +1,12 @@
+Hallo {{ user.first_name }},
+
+Dein Kauf von {{ transaction.number }} Credit{{ transaction.number|pluralize:"s" }} war erfolgreich!
+Die Credits wurden Deinem Konto sofort gutgeschrieben.
+
+Dein aktuelles Guthaben: {{ total_credits }} Credits
+
+Jetzt Kurs buchen: {{ site_url }}/users/mein-konto/
+
+--
+Mileja Yoga & Pilates
+{{ site_url }}

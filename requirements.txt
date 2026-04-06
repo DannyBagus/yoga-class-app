@@ -9,3 +9,5 @@ pydantic_core==2.23.4
 sqlparse==0.5.1
 typing_extensions==4.12.2
 whitenoise==6.7.0
+mozilla-django-oidc>=4.0
+stripe>=7.0

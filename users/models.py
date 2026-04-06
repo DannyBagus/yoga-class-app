@@ -46,11 +46,19 @@ class PurchaseTransaction(models.Model):
         (STATUS_FINAL, 'Abgeschlossen'),
     ]
     status = models.CharField(
-        max_length=10, 
-        choices=STATUS_CHOICES, 
+        max_length=10,
+        choices=STATUS_CHOICES,
         default=STATUS_PENDING,
         verbose_name="Status"
-    ) 
+    )
+    stripe_checkout_session_id = models.CharField(
+        max_length=200, blank=True, default='',
+        verbose_name="Stripe Session ID"
+    )
+    stripe_payment_intent_id = models.CharField(
+        max_length=200, blank=True, default='',
+        verbose_name="Stripe Payment Intent"
+    )
 
     class Meta:
         verbose_name = ("Kauftransaktion")
@@ -61,12 +69,13 @@ class PurchaseTransaction(models.Model):
     
 # Signal handler to update or create Credits entry when a PurchaseTransaction is saved
 @receiver(post_save, sender=PurchaseTransaction)
-def update_credits(sender, instance, **kwargs):
-    # Check if the transaction is marked as 'final'
-    if instance.status == PurchaseTransaction.STATUS_FINAL:
-        # Get or create the Credits entry for the user
-        credits, created = Credits.objects.get_or_create(user=instance.user)
-
-        # Increment the number of credits by the transaction amount
-        credits.number += instance.number
-        credits.save()
+def update_credits(sender, instance, created, **kwargs):
+    if instance.status != PurchaseTransaction.STATUS_FINAL:
+        return
+    # Only credit on creation with status=final or when status field was explicitly updated
+    update_fields = kwargs.get('update_fields')
+    if not created and update_fields is not None and 'status' not in update_fields:
+        return
+    credits_obj, _ = Credits.objects.get_or_create(user=instance.user)
+    credits_obj.number += instance.number
+    credits_obj.save()

@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from . import stripe_views
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 
 urlpatterns = [
@@ -11,6 +12,9 @@ urlpatterns = [
     path('mein-konto/', views.my_account, name='my-account'),
     path('news/', views.news_item, name='news-item'),
     path('purchase-credits/', views.purchase_credits, name='confirm-purchase'),
+    path('checkout/', stripe_views.create_checkout_session, name='create-checkout'),
+    path('checkout/success/', stripe_views.checkout_success, name='checkout-success'),
+    path('checkout/cancel/', stripe_views.checkout_cancel, name='checkout-cancel'),
     path('agb/', views.gtc_full, name='gtc-full'),
     path('dsg/', views.dsg, name='dsg'),
     path('password_reset/', views.CustomPasswordResetView.as_view(

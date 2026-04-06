@@ -27,6 +27,8 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,6 +44,14 @@ INSTALLED_APPS = [
     'core',
     'users',
     'course',
+
+    # OIDC
+    'mozilla_django_oidc',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'users.oidc_backend.YogaOIDCBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 MIDDLEWARE = [
@@ -164,3 +174,25 @@ DATE_INPUT_FORMATS = ['%d.%m.%Y']
 
 # enable WhiteNoise to manage static files
 WHITENOISE_USE_FINDERS = True  # Optional: allows WhiteNoise to use Django's static files finders
+
+# OIDC / Authentik SSO (Admin only)
+OIDC_OP_BASE_URL = env('OIDC_OP_BASE_URL', default='https://auth.sanatify.ch')
+OIDC_RP_CLIENT_ID = env('OIDC_CLIENT_ID', default='mileja-yoga')
+OIDC_RP_CLIENT_SECRET = env('OIDC_CLIENT_SECRET', default='')
+OIDC_OP_AUTHORIZATION_ENDPOINT = f'{OIDC_OP_BASE_URL}/application/o/authorize/'
+OIDC_OP_TOKEN_ENDPOINT = f'{OIDC_OP_BASE_URL}/application/o/token/'
+OIDC_OP_USER_ENDPOINT = f'{OIDC_OP_BASE_URL}/application/o/userinfo/'
+OIDC_OP_JWKS_ENDPOINT = f'{OIDC_OP_BASE_URL}/application/o/mileja-yoga/jwks/'
+OIDC_RP_SIGN_ALGO = 'RS256'
+OIDC_RP_SCOPES = 'openid profile email groups'
+OIDC_OP_LOGOUT_ENDPOINT = f'{OIDC_OP_BASE_URL}/application/o/mileja-yoga/end-session/'
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/admin/'
+
+# Stripe
+STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY', default='')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='')
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='')
+STRIPE_PRICE_1_CREDIT = env('STRIPE_PRICE_1_CREDIT', default='')
+STRIPE_PRICE_5_CREDITS = env('STRIPE_PRICE_5_CREDITS', default='')
+STRIPE_PRICE_10_CREDITS = env('STRIPE_PRICE_10_CREDITS', default='')

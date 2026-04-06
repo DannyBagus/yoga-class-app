@@ -26,10 +26,11 @@ class CreditsAdmin(admin.ModelAdmin):
 # --- 2. Custom Admin für PurchaseTransaction ---
 
 class PurchaseTransactionAdmin(admin.ModelAdmin):
-    list_display = ('date', 'user', 'number', 'status')
-    list_filter = ('status', 'date') 
-    search_fields = ('user__username', 'user__last_name', 'user__email')
-    ordering = ('-date',) # Neueste zuerst
+    list_display = ('date', 'user', 'number', 'status', 'stripe_checkout_session_id')
+    list_filter = ('status', 'date')
+    search_fields = ('user__username', 'user__last_name', 'user__email', 'stripe_checkout_session_id')
+    readonly_fields = ('stripe_checkout_session_id', 'stripe_payment_intent_id')
+    ordering = ('-date',)
 
 # --- 3. User Admin Erweiterung (Booking Inline) ---
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0; padding:0; background-color:#f5f5f5; font-family:Arial, Helvetica, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f5f5; padding:20px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden;">
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#000300; padding:24px; text-align:center;">
+              <h1 style="color:#e46aeb; margin:0; font-size:22px;">Mileja Yoga &amp; Pilates</h1>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 24px;">
+              <p style="font-size:16px; color:#333;">Hallo {{ user.first_name }},</p>
+              <p style="font-size:16px; color:#333;">
+                Dein Kauf von <strong>{{ transaction.number }} Credit{{ transaction.number|pluralize:"s" }}</strong> war erfolgreich!
+                Die Credits wurden Deinem Konto sofort gutgeschrieben.
+              </p>
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
+                <tr>
+                  <td style="background-color:#f0fdf4; border-radius:8px; padding:16px; text-align:center;">
+                    <p style="margin:0 0 4px; color:#666; font-size:14px;">Dein aktuelles Guthaben</p>
+                    <p style="margin:0; color:#e46aeb; font-size:28px; font-weight:bold;">{{ total_credits }} Credits</p>
+                  </td>
+                </tr>
+              </table>
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:16px 0;">
+                    <a href="{{ site_url }}/users/mein-konto/"
+                       style="background-color:#00df9a; color:#000; font-weight:bold; text-decoration:none; padding:14px 32px; border-radius:8px; display:inline-block; font-size:16px;">
+                      Jetzt Kurs buchen
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#000300; padding:16px 24px; text-align:center;">
+              <p style="color:#999; font-size:12px; margin:0;">
+                Mileja Yoga &amp; Pilates &mdash;
+                <a href="{{ site_url }}" style="color:#e46aeb; text-decoration:none;">kurse.mileja.ch</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
