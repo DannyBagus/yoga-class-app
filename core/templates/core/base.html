@@ -6,6 +6,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Mileja Yoga & Pilates{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'core/images/favicon.svg' %}">
+
+    <!-- Google Fonts for Logo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Montserrat:wght@200;300&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,6 +31,13 @@
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
+    <style>
+      .htmx-request .htmx-indicator { display: inline-block !important; }
+      .htmx-indicator { display: none; }
+      .htmx-request.htmx-indicator { display: inline-block !important; }
+      @keyframes htmx-pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+      .htmx-request { opacity: 0.6; transition: opacity 200ms ease-in; }
+    </style>
   </head>
   <body class="bg-[#000300] text-white">
     <!-- Domain-Umzug Banner -->
@@ -48,10 +61,10 @@
       x-data="{ account_open: false, account_clicked: false, auth_account_clicked: false, mobile_menu_open: false }"
     >
       <!-- Logo -->
-      <div
-        class="w-full text-lg text-center md:text-left md:text-3xl font-bold text-upper text-[#e46aeb] m-4"
-      >
-        <a href="/">MILEJA YOGA & PILATES.</a>
+      <div class="w-full text-center md:text-left m-4">
+        <a href="/" class="inline-block">
+          <img src="{% static 'core/images/logo.svg' %}" alt="Mileja Yoga & Pilates" class="h-28 md:h-36">
+        </a>
       </div>
 
       <!-- Menu for desktop -->

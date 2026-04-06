@@ -1,0 +1,32 @@
+<svg width="100%" viewBox="220 30 240 210" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="petalGrad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e46aeb" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#b44fc0" stop-opacity="0.6"/>
+    </linearGradient>
+    <linearGradient id="petalGrad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00df9a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#009e6e" stop-opacity="0.6"/>
+    </linearGradient>
+    <linearGradient id="petalGrad3" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e46aeb" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#00df9a" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(340,120)">
+    <path d="M0,0 C-18,-38 -10,-70 0,-82 C10,-70 18,-38 0,0Z" fill="url(#petalGrad1)" opacity="0.85"/>
+    <path d="M0,0 C18,38 10,70 0,82 C-10,70 -18,38 0,0Z" fill="url(#petalGrad1)" opacity="0.6"/>
+    <path d="M0,0 C-38,-18 -70,-10 -82,0 C-70,10 -38,18 0,0Z" fill="url(#petalGrad2)" opacity="0.85"/>
+    <path d="M0,0 C38,18 70,10 82,0 C70,-10 38,-18 0,0Z" fill="url(#petalGrad2)" opacity="0.6"/>
+    <path d="M0,0 C-14,-30 -30,-44 -42,-46 C-28,-34 -14,-14 0,0Z" fill="url(#petalGrad3)" opacity="0.75"/>
+    <path d="M0,0 C14,30 30,44 42,46 C28,34 14,14 0,0Z" fill="url(#petalGrad3)" opacity="0.75"/>
+    <path d="M0,0 C30,-14 44,-30 46,-42 C34,-28 14,-14 0,0Z" fill="url(#petalGrad3)" opacity="0.75"/>
+    <path d="M0,0 C-30,14 -44,30 -46,42 C-34,28 -14,14 0,0Z" fill="url(#petalGrad3)" opacity="0.75"/>
+    <circle cx="0" cy="0" r="12" fill="#00df9a" opacity="0.9"/>
+    <circle cx="0" cy="0" r="6" fill="#e46aeb" opacity="1"/>
+  </g>
+  <line x1="60" y1="120" x2="248" y2="120" stroke="#e46aeb" stroke-width="0.5" opacity="0.4"/>
+  <line x1="432" y1="120" x2="620" y2="120" stroke="#00df9a" stroke-width="0.5" opacity="0.4"/>
+  <text x="340" y="200" text-anchor="middle" font-family="'Cormorant Garamond', Georgia, serif" font-size="52" font-weight="300" fill="#e46aeb">MILEJA<tspan fill="#00df9a">.</tspan></text>
+  <text x="340" y="227" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="13" font-weight="200" fill="#e0e0e0">YOGA &amp; PILATES</text>
+</svg>

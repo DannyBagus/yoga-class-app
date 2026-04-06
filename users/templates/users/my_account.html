@@ -26,9 +26,9 @@
         hx-get="{% url 'my-account' %}?navigate=news"
         hx-target="#my-account-content"
         hx-swap="innerHTML"
-        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb]"
+        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb] transition-all duration-200"
         @click="selected = ''"
-        :class="selected == '' ? 'bg-[#e46aeb] text-white' : 'bg-white text-[#e46aeb]'"
+        :class="selected == '' ? 'bg-[#e46aeb] text-white shadow-lg scale-105' : 'bg-white text-[#e46aeb] opacity-70 hover:opacity-100'"
       >
         News
       </button>
@@ -36,9 +36,9 @@
         hx-get="{% url 'my-account' %}?navigate=credits"
         hx-target="#my-account-content"
         hx-swap="innerHTML"
-        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb]"
+        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb] transition-all duration-200"
         @click="selected = 'credits'"
-        :class="selected == 'credits' ? 'bg-[#e46aeb] text-white' : 'bg-white text-[#e46aeb]'"
+        :class="selected == 'credits' ? 'bg-[#e46aeb] text-white shadow-lg scale-105' : 'bg-white text-[#e46aeb] opacity-70 hover:opacity-100'"
       >
         Credits
       </button>
@@ -46,9 +46,9 @@
         hx-get="{% url 'my-account' %}?navigate=bookings"
         hx-target="#my-account-content"
         hx-swap="innerHTML"
-        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb]"
+        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb] transition-all duration-200"
         @click="selected = 'bookings'"
-        :class="selected == 'bookings' ? 'bg-[#e46aeb] text-white' : 'bg-white text-[#e46aeb]'"
+        :class="selected == 'bookings' ? 'bg-[#e46aeb] text-white shadow-lg scale-105' : 'bg-white text-[#e46aeb] opacity-70 hover:opacity-100'"
       >
         Buchungen
       </button>
@@ -56,9 +56,9 @@
         hx-get="{% url 'my-account' %}?navigate=gtc"
         hx-target="#my-account-content"
         hx-swap="innerHTML"
-        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb]"
+        class="rounded-xl p-4 m-2 md:p-8 text-md md:text-xl flex border-2 border-[#e46aeb] transition-all duration-200"
         @click="selected = 'gtc'"
-        :class="selected == 'gtc' ? 'bg-[#00df9a] text-white' : 'bg-white text-[#e46aeb]'"
+        :class="selected == 'gtc' ? 'bg-[#e46aeb] text-white shadow-lg scale-105' : 'bg-white text-[#e46aeb] opacity-70 hover:opacity-100'"
       >
         AGBs
       </button>

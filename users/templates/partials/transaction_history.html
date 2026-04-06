@@ -6,14 +6,14 @@
   <table
     class="table-auto border-collapse w-[90%] bg-white rounded-xl shadow-lg overflow-hidden"
   >
-    <thead class="bg-[#e46aeb] text-white text-xs">
+    <thead class="bg-[#e46aeb] text-white text-sm">
       <tr>
         <th class="p-3 md:px-6 md:py-4 text-left">Bestelldatum</th>
         <th class="p-3 md:px-6 md:py-4 text-center">Anzahl Credits</th>
         <th class="p-3 md:px-6 md:py-4 text-center">Status</th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-gray-200 text-black text-xs">
+    <tbody class="divide-y divide-gray-200 text-black text-sm">
       {% for pt in purchase_transactions %}
       <tr class="hover:bg-gray-100">
         <td class="p-3 md:px-6 md:py-4">{{ pt.date }}</td>

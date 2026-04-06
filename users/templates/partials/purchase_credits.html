@@ -1,6 +1,6 @@
 <div
   id="purchase-credits"
-  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-gray-100 max-w-[90%] md:min-w-[70%] p-16 rounded-lg"
+  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-gray-100 max-w-[90%] md:min-w-[70%] p-16 rounded-lg z-50"
   x-data="{ selected: '', accepted: false }"
 >
   <p class="text-lg md:text-2xl font-bold text-[#00df9a] mb-8">
@@ -13,7 +13,8 @@
       @click="selected=1"
     >
       1 Credit
-      <p class="text-sm text-center font-normal pt-4">CHF 25 pro Credit</p>
+      <p class="text-sm text-center font-normal pt-2">CHF 25.00</p>
+      <p class="text-xs text-center font-normal text-gray-500">CHF 25 / Credit</p>
     </button>
     <button
       class="bg-[#e46aeb] rounded-xl p-4 md:p-8 min-w-[120px] text-black md:text-2xl font-bold transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
@@ -21,7 +22,8 @@
       @click="selected=5"
     >
       5 Credits
-      <p class="text-sm text-center font-normal pt-4">CHF 24 pro Credit</p>
+      <p class="text-sm text-center font-normal pt-2">CHF 120.00</p>
+      <p class="text-xs text-center font-normal text-gray-700">CHF 24 / Credit</p>
     </button>
     <button
       class="bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl p-4 md:p-8 min-w-[120px] text-black md:text-2xl font-bold transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
@@ -29,7 +31,8 @@
       @click="selected=10"
     >
       10 Credits
-      <p class="text-sm text-center font-normal pt-4">CHF 22.50 pro Credit</p>
+      <p class="text-sm text-center font-normal pt-2 text-white">CHF 225.00</p>
+      <p class="text-xs text-center font-normal text-white/70">CHF 22.50 / Credit</p>
     </button>
   </div>
   <div

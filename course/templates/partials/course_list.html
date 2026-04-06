@@ -4,7 +4,7 @@
     <div class="max-w-[1240px] mx-auto grid md:grid-cols-4 md:gap-4 py-8 px-8">
       {% if courses%} {% for course in courses %}
       <div
-        class="flex flex-col pt-8 my-4 justify-center px-4 bg-black border-4 border-solid border-[#00df9a] rounded-lg"
+        class="flex flex-col pt-8 my-4 justify-center px-4 bg-black border border-[#00df9a]/40 rounded-lg hover:border-[#00df9a] transition-colors duration-200"
       >
         {% if course.category.id == 1 %}<img
           src="{% static 'core/images/ss_yoga.jpg' %}"
@@ -32,28 +32,20 @@
         <div class="flex items-center justify-center gap-4 pb-8">
           {% if course.capacity == 0 %}
           <div
-            class="bg-slate-300 p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto cursor-pointer"
+            class="bg-slate-400 text-white p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto line-through"
           >
-            <!--
-            hx-trigger="click"
-            hx-get="{% url 'show-attendees' %}?course_id={{ course.pk }}"
-            hx-target="#attendees-list"
-            hx-swap="innerHTML"
-            @click="if(!authenticated) return; showAttendees = true"
-            -->
             Ausgebucht
+          </div>
+          {% elif course.capacity <= 3 %}
+          <div
+            class="bg-amber-500 text-black p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto"
+          >
+            Nur noch {{ course.capacity }}!
           </div>
           {% else %}
           <div
-            class="bg-[#e46aeb] p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto cursor-pointer"
+            class="bg-[#00df9a] text-black p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto"
           >
-            <!--
-            hx-trigger="click"
-            hx-get="{% url 'show-attendees' %}?course_id={{ course.pk }}"
-            hx-target="#attendees-list"
-            hx-swap="innerHTML"
-            @click="if(!authenticated) return; showAttendees = true"
-            -->
             {{ course.capacity }} Plätze
           </div>
           {% endif %} {% if course.pk in booked_courses %}
