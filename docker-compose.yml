@@ -14,12 +14,22 @@ services:
       - "daniel_default"
     labels:
       traefik.enable: "true"
-      traefik.http.routers.yoga-app.entrypoints: "websecure"
-      traefik.http.routers.yoga-app.middlewares: "authelia@docker"
-      traefik.http.routers.yoga-app.rule: "Host(`kurse.mileja.duckdns.org`)"
-      traefik.http.routers.yoga-app.tls: "true"
-      traefik.http.routers.yoga-app.tls.options: "default"
-      traefik.http.routers.yoga-app.tls.certresolver: "myresolver"
+      # --- Alte Domain: 301 Redirect → kurse.mileja.ch ---
+      traefik.http.routers.yoga-app-old.entrypoints: "websecure"
+      traefik.http.routers.yoga-app-old.rule: "Host(`kurse.mileja.duckdns.org`)"
+      traefik.http.routers.yoga-app-old.tls: "true"
+      traefik.http.routers.yoga-app-old.tls.certresolver: "myresolver"
+      traefik.http.routers.yoga-app-old.middlewares: "yoga-redirect@docker"
+      traefik.http.routers.yoga-app-old.service: "yoga-app"
+      traefik.http.middlewares.yoga-redirect.redirectregex.regex: "^https://kurse\\.mileja\\.duckdns\\.org/(.*)"
+      traefik.http.middlewares.yoga-redirect.redirectregex.replacement: "https://kurse.mileja.ch/$${1}"
+      traefik.http.middlewares.yoga-redirect.redirectregex.permanent: "true"
+      # --- Neue Domain: Serviert die App ---
+      traefik.http.routers.yoga-app-new.entrypoints: "websecure"
+      traefik.http.routers.yoga-app-new.rule: "Host(`kurse.mileja.ch`)"
+      traefik.http.routers.yoga-app-new.tls: "true"
+      traefik.http.routers.yoga-app-new.tls.certresolver: "cfresolver"
+      # --- Gemeinsamer Service ---
       traefik.http.services.yoga-app.loadbalancer.server.port: "8020"
       traefik.http.services.yoga-app.loadbalancer.server.scheme: "http"
     container_name: yoga-app
