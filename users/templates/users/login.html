@@ -11,7 +11,7 @@
   >
     <form action="/users/login/" method="post" class="col-span-1">
       {% csrf_token %}
-      <label for="id_username" class="block">Benutzername</label>
+      <label for="id_username" class="block">Benutzername oder E-Mail</label>
       {{ form.username }}
       <!-- Error for Username -->
       {% if form.username.errors %}

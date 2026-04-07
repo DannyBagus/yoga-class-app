@@ -54,8 +54,14 @@ def logout_user(request):
 def login_user(request):
     if request.method == 'POST':
 
-        username = request.POST['username']
+        identifier = request.POST['username'].strip()
         password = request.POST['password']
+        # Erlaube Login per Username oder E-Mail
+        if '@' in identifier:
+            user_obj = User.objects.filter(email__iexact=identifier).first()
+            username = user_obj.username if user_obj else identifier
+        else:
+            username = identifier
         user = authenticate(request, username=username, password=password)
         next = request.POST.get('next', None)  # Get next or None if not present
         if user is not None:
