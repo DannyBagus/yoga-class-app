@@ -5,13 +5,19 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, Pass
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        
+
         input_class = "w-full rounded-lg p-3 mb-2 text-black bg-white border border-gray-300 focus:ring-2 focus:ring-[#e46aeb] focus:border-transparent focus:outline-none"
         for field_name in ('username', 'email', 'first_name', 'last_name', 'password1', 'password2'):
             self.fields[field_name].widget.attrs['class'] = input_class
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Diese E-Mail Adresse ist bereits registriert.")
+        return email
 
     class Meta:
         model = User
