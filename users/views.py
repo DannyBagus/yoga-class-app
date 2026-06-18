@@ -89,7 +89,11 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        login(request, user)
+        # Mehrere AUTHENTICATION_BACKENDS sind aktiv (OIDC + ModelBackend).
+        # Der User stammt aus User.objects.get() und hat kein .backend-Attribut,
+        # daher muss das Backend explizit angegeben werden, sonst wirft login()
+        # einen ValueError -> 500.
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return render(request, 'users/confirmation_successful.html')
     else:
         return render(request, 'users/activation_invalid.html')
