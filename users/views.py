@@ -25,21 +25,23 @@ def register_view(request):
             
             # Send verification email
             current_site = get_current_site(request)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            protocol = 'https' if request.is_secure() else 'http'
+            activation_url = f'{protocol}://{current_site.domain}/users/activate/{uid}/{token}'
+
             mail_subject = 'Bestätige Deine Registrierung beim Mileja Yoga & Pilates.'
-            message = render_to_string('users/activation_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': default_token_generator.make_token(user),
-            })
+            context = {'user': user, 'activation_url': activation_url}
+            html_message = render_to_string('users/activation_email.html', context)
+            text_message = render_to_string('users/activation_email.txt', context)
             to_email = form.cleaned_data.get('email')
             send_mail(
-                mail_subject, 
-                f'Hallo {user}', 
-                'admin@mileja.ch', 
+                mail_subject,
+                text_message,
+                'admin@mileja.ch',
                 [to_email],
                 fail_silently=False,
-                html_message=message
+                html_message=html_message
             )
             
             return render(request, "users/registration_complete.html")

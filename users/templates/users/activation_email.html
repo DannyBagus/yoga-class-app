@@ -1,38 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Heroicons CDN -->
-    <script src="https://unpkg.com/heroicons@2.0.13/dist/outline/heroicons.js"></script>
-
-    <!-- HTMX CDN -->
-    <script
-      src="https://unpkg.com/htmx.org@2.0.2"
-      integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
-      crossorigin="anonymous"
-    ></script>
-
-    <!-- Alpine JS -->
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
-    ></script>
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Registrierung bestätigen</title>
   </head>
-  <body>
-    <!-- Main content -->
-    <div class="container mx-auto p-6">
-      <p>Hallo {{ user.username }},</p>
-      <p>
-        Klicke auf den untenstehenden Link um deine Registrierung zu bestätigen:
-      </p>
-      <a href="http://{{ domain }}/users/activate/{{ uid }}/{{ token }}">
-        <button class="bg-[#e46aeb] p-4">Bestätigen</button></a
-      >
-    </div>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+            <!-- Header -->
+            <tr>
+              <td style="background-color: #00df9a; padding: 28px 32px; text-align: center;">
+                <h1 style="margin: 0; font-size: 22px; line-height: 1.3; color: #0b3d2e;">Mileja Yoga &amp; Pilates</h1>
+              </td>
+            </tr>
+            <!-- Body -->
+            <tr>
+              <td style="padding: 32px;">
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;">Hallo {{ user.first_name|default:user.username }},</p>
+                <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.5;">
+                  schön, dass Du dabei bist! Bitte bestätige Deine Registrierung, indem Du auf den folgenden Button klickst:
+                </p>
+                <!-- Button -->
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">
+                  <tr>
+                    <td align="center" style="border-radius: 8px; background-color: #e46aeb;">
+                      <a href="{{ activation_url }}" target="_blank" style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
+                        Registrierung bestätigen
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin: 0 0 8px; font-size: 13px; line-height: 1.5; color: #6b7280;">
+                  Falls der Button nicht funktioniert, kopiere diesen Link in Deinen Browser:
+                </p>
+                <p style="margin: 0 0 24px; font-size: 13px; line-height: 1.5; word-break: break-all;">
+                  <a href="{{ activation_url }}" style="color: #e46aeb;">{{ activation_url }}</a>
+                </p>
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6b7280;">
+                  Wenn Du Dich nicht registriert hast, kannst Du diese E-Mail einfach ignorieren.
+                </p>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td style="padding: 20px 32px; background-color: #f9fafb; border-top: 1px solid #eef0f2; text-align: center;">
+                <p style="margin: 0; font-size: 12px; color: #9ca3af;">Mileja Yoga &amp; Pilates &middot; kurse.mileja.ch</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

@@ -1,0 +1,10 @@
+Hallo {{ user.first_name|default:user.username }},
+
+schön, dass Du dabei bist! Bitte bestätige Deine Registrierung beim
+Mileja Yoga & Pilates, indem Du den folgenden Link in Deinem Browser öffnest:
+
+{{ activation_url }}
+
+Wenn Du Dich nicht registriert hast, kannst Du diese E-Mail einfach ignorieren.
+
+Mileja Yoga & Pilates · kurse.mileja.ch
