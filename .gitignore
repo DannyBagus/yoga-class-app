@@ -139,3 +139,5 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+# Audit-Log der Fake-Account-Bereinigung (enthaelt Dritt-Mailadressen)
+inactive_user_purge.log

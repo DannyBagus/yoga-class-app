@@ -11,6 +11,15 @@
   >
     <form action="/users/register/" method="post" class="col-span-1">
       {% csrf_token %}
+      <!-- Bot-Schutz: Honeypot (fuer Menschen unsichtbar) + Zeitstempel -->
+      <div aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; height: 0; overflow: hidden;">
+        <label for="id_website">Website (bitte leer lassen)</label>
+        {{ form.website }}
+      </div>
+      {{ form.form_ts }}
+      {% if form.non_field_errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.non_field_errors.0 }}</p>
+      {% endif %}
       <label for="id_username" class="block">Benutzername</label>
       {{ form.username }}
       <!-- Error for Username -->
