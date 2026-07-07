@@ -1,0 +1,34 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<p>Folgende Buchungen werden auf den gewählten Zielkurs umgebucht:</p>
+
+<ul>
+  {% for booking in bookings %}
+    <li>{{ booking.user.first_name }} {{ booking.user.last_name }} — {{ booking.course }}</li>
+  {% endfor %}
+</ul>
+
+<form action="" method="post">{% csrf_token %}
+  {% for booking in bookings %}
+    <input type="hidden" name="_selected_action" value="{{ booking.pk }}">
+  {% endfor %}
+  <input type="hidden" name="action" value="{{ action_name }}">
+
+  <p>
+    <label for="target_course"><strong>Zielkurs:</strong></label>
+    <select name="target_course" id="target_course" required>
+      <option value="">---------</option>
+      {% for course in courses %}
+        <option value="{{ course.pk }}">{{ course }} — {{ course.capacity }} Plätze frei</option>
+      {% endfor %}
+    </select>
+  </p>
+
+  <div class="submit-row">
+    <input type="submit" name="apply" value="Umbuchen" class="default">
+    <a href="../" class="button cancel-link">Abbrechen</a>
+  </div>
+</form>
+{% endblock %}
