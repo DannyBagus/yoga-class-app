@@ -189,6 +189,9 @@ OIDC_OP_LOGOUT_ENDPOINT = f'{OIDC_OP_BASE_URL}/application/o/mileja-yoga/end-ses
 LOGIN_REDIRECT_URL = '/admin/'
 LOGOUT_REDIRECT_URL = '/admin/'
 
+# Shared Secret fuer die interne Workbench-API (X-API-KEY-Header)
+WORKBENCH_API_KEY = env('WORKBENCH_API_KEY', default='')
+
 # Stripe
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY', default='')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='')
