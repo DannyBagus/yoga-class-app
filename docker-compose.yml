@@ -35,6 +35,7 @@ services:
     container_name: yoga-app
 
   yoga-db:
+    stop_grace_period: 60s
     image: mysql:8.0
     restart: always
     networks:
