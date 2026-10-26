@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kurs abgesagt</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 640px; background-color: #ffffff; border-radius: 12px; overflow: hidden;">
+            <tr>
+              <td style="background-color: #ba2121; padding: 20px 32px;">
+                <h1 style="margin: 0; font-size: 20px; color: #ffffff;">Kurs abgesagt</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 24px 32px;">
+                <p style="margin: 0 0 4px; font-size: 17px;"><strong>{{ course.category.name }} - {{ course.name }}</strong></p>
+                <p style="margin: 0 0 16px; font-size: 15px;">{{ course_date }}, {{ course_time }} Uhr</p>
+                <p style="margin: 0 0 6px; font-size: 14px; color: #4b5563;">
+                  Abgesagt am {{ cancelled_at }}{% if cancelled_by %} von <strong>{{ cancelled_by }}</strong>{% endif %}.
+                </p>
+                <p style="margin: 0 0 20px; font-size: 14px; color: #4b5563;">
+                  {{ participants|length }} Buchung(en) storniert, je 1 Credit gutgeschrieben.
+                  Absage-E-Mails versendet: {{ mails_sent }}.
+                  {% if mail_failures %}<strong style="color: #ba2121;">Fehlgeschlagen: {{ mail_failures }}, bitte telefonisch informieren.</strong>{% endif %}
+                </p>
+                {% if participants %}
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; font-size: 14px;">
+                  <tr style="background-color: #f9fafb; text-align: left;">
+                    <th style="padding: 8px; border-bottom: 1px solid #e5e7eb;">Teilnehmerin</th>
+                    <th style="padding: 8px; border-bottom: 1px solid #e5e7eb;">Natel</th>
+                    <th style="padding: 8px; border-bottom: 1px solid #e5e7eb;">Credits</th>
+                    <th style="padding: 8px; border-bottom: 1px solid #e5e7eb;">Absage-Mail</th>
+                  </tr>
+                  {% for p in participants %}
+                  <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #f1f2f4;">{{ p.name }}<br /><span style="color: #6b7280; font-size: 12px;">{{ p.email|default:"keine E-Mail" }}</span></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #f1f2f4;">{% if p.phone %}<a href="tel:{{ p.phone }}" style="color: #1f2937;">{{ p.phone }}</a>{% else %}<span style="color: #9ca3af;">nicht erfasst</span>{% endif %}</td>
+                    <td style="padding: 8px; border-bottom: 1px solid #f1f2f4;">{{ p.credits_before }} &rarr; {{ p.credits_after }}</td>
+                    <td style="padding: 8px; border-bottom: 1px solid #f1f2f4;">{% if p.mail_ok %}<span style="color: #047857;">versendet</span>{% else %}<strong style="color: #ba2121;">fehlgeschlagen</strong>{% endif %}</td>
+                  </tr>
+                  {% endfor %}
+                </table>
+                {% else %}
+                <p style="margin: 0; font-size: 14px;">Es waren keine Teilnehmerinnen gebucht.</p>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 16px 32px; background-color: #f9fafb; border-top: 1px solid #eef0f2; text-align: center;">
+                <p style="margin: 0; font-size: 12px; color: #9ca3af;">Mileja Yoga &amp; Pilates &middot; kurse.mileja.ch</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

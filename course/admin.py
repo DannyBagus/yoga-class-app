@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 
 from users.models import Credits
-from .cancellation import CourseAlreadyCancelled, cancel_course
+from .cancellation import SUMMARY_RECIPIENTS, CourseAlreadyCancelled, cancel_course
 from .models import Courses, Category, Booking
 
 
@@ -149,7 +149,7 @@ class CourseAdmin(admin.ModelAdmin):
             return redirect(change_url)
 
         try:
-            result = cancel_course(course.pk)
+            result = cancel_course(course.pk, cancelled_by=request.user)
         except CourseAlreadyCancelled:
             self.message_user(request, "Der Kurs war bereits abgesagt.", messages.WARNING)
             return redirect(change_url)
@@ -165,8 +165,9 @@ class CourseAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             f"Kurs abgesagt: {len(result.refunds)} Buchung(en) storniert, je 1 Credit gutgeschrieben, "
-            f"{result.mails_sent} E-Mail(s) versendet.",
-            messages.SUCCESS,
+            f"{result.mails_sent} E-Mail(s) versendet. Zusammenfassung an "
+            f"{', '.join(SUMMARY_RECIPIENTS)}: {'versendet' if result.summary_sent else 'FEHLGESCHLAGEN'}.",
+            messages.SUCCESS if result.summary_sent else messages.WARNING,
         )
         if result.mail_failures:
             names = ", ".join(f"{u.first_name} {u.last_name} <{u.email or 'keine E-Mail'}>"

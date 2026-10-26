@@ -1,0 +1,16 @@
+Kurs abgesagt
+
+{{ course.category.name }} - {{ course.name }}
+{{ course_date }}, {{ course_time }} Uhr
+
+Abgesagt am {{ cancelled_at }}{% if cancelled_by %} von {{ cancelled_by }}{% endif %}.
+{{ participants|length }} Buchung(en) storniert, je 1 Credit gutgeschrieben.
+Absage-E-Mails versendet: {{ mails_sent }}{% if mail_failures %}, FEHLGESCHLAGEN: {{ mail_failures }} (bitte telefonisch informieren){% endif %}
+
+{% for p in participants %}- {{ p.name }}
+  E-Mail: {{ p.email|default:"-" }} ({% if p.mail_ok %}Absage-Mail versendet{% else %}MAIL FEHLGESCHLAGEN{% endif %})
+  Natel: {{ p.phone|default:"nicht erfasst" }}
+  Credits: {{ p.credits_before }} -> {{ p.credits_after }}
+{% empty %}Es waren keine Teilnehmerinnen gebucht.
+{% endfor %}
+Mileja Yoga & Pilates · kurse.mileja.ch

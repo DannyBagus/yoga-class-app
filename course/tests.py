@@ -59,11 +59,56 @@ class CancelCourseServiceTest(CourseCancellationBase):
                          [('anna', 2, 3), ('berta', 0, 1)])
 
         self.assertEqual(result.mails_sent, 2)
-        self.assertEqual(sorted(m.to[0] for m in mail.outbox), ['anna@example.com', 'berta@example.com'])
+        self.assertTrue(result.summary_sent)
+        self.assertEqual(sorted(m.to[0] for m in mail.outbox),
+                         ['anna@example.com', 'berta@example.com', 'hebammen@mileja.ch'])
         msg = next(m for m in mail.outbox if m.to == ['anna@example.com'])
+        self.assertEqual(msg.from_email, 'admin@mileja.ch')
+        self.assertEqual(msg.reply_to, ['hebammen@mileja.ch'])
         self.assertIn('Kursabsage: Yoga - Yoga Flow', msg.subject)
         self.assertIn('3 Credit(s)', msg.body)
         self.assertIn('3 Credit(s)', msg.alternatives[0][0])
+        self.assertIn('Bitte bestätige kurz, dass Du die Nachricht erhalten hast.', msg.body)
+        self.assertIn('Bitte bestätige kurz, dass Du die Nachricht erhalten hast.', msg.alternatives[0][0])
+
+    def test_summary_mail_lists_participants(self):
+        boss = User.objects.create_user('boss', 'boss@example.com', 'pw', first_name='Nina', last_name='Chefin')
+        cancel_course(self.course.pk, cancelled_by=boss)
+        summary = next(m for m in mail.outbox if m.to == ['hebammen@mileja.ch'])
+        self.assertEqual(summary.from_email, 'admin@mileja.ch')
+        self.assertIn('Kurs abgesagt: Yoga - Yoga Flow', summary.subject)
+        self.assertIn('2 Buchung(en) storniert', summary.subject)
+        for text in (summary.body, summary.alternatives[0][0]):
+            self.assertIn('von Nina Chefin', text.replace('<strong>', '').replace('</strong>', ''))
+            self.assertIn('Anna Muster', text)
+            self.assertIn('Berta Muster', text)
+            self.assertIn('+41791234567', text)
+            self.assertIn('anna@example.com', text)
+        self.assertIn('Credits: 2 -> 3', summary.body)
+        self.assertNotIn('FEHLGESCHLAGEN', summary.body)
+
+    def test_summary_mail_flags_failed_customer_mail(self):
+        from course import cancellation
+        real_send = cancellation._send_mail
+
+        def flaky(subject, template, context, to, reply_to=None):
+            if to == ['berta@example.com']:
+                raise OSError('mailbox full')
+            return real_send(subject, template, context, to, reply_to)
+
+        with mock.patch('course.cancellation._send_mail', side_effect=flaky):
+            result = cancel_course(self.course.pk)
+        self.assertTrue(result.summary_sent)
+        summary = next(m for m in mail.outbox if m.to == ['hebammen@mileja.ch'])
+        self.assertIn('FEHLGESCHLAGEN: 1', summary.body)
+        self.assertIn('MAIL FEHLGESCHLAGEN', summary.body)
+
+    def test_summary_mail_without_bookings(self):
+        Booking.objects.filter(course=self.course).delete()
+        result = cancel_course(self.course.pk)
+        self.assertTrue(result.summary_sent)
+        self.assertEqual([m.to for m in mail.outbox], [['hebammen@mileja.ch']])
+        self.assertIn('keine Teilnehmerinnen', mail.outbox[0].body)
 
     def test_refunds_even_within_24h(self):
         Courses.objects.filter(pk=self.course.pk).update(date=timezone.now().date())
@@ -77,10 +122,11 @@ class CancelCourseServiceTest(CourseCancellationBase):
         self.assertEqual(self._credits(self.anna), 3)
 
     def test_mail_failure_does_not_undo_cancellation(self):
-        with mock.patch('course.cancellation.send_mail', side_effect=OSError('smtp down')):
+        with mock.patch('course.cancellation.EmailMultiAlternatives.send', side_effect=OSError('smtp down')):
             result = cancel_course(self.course.pk)
         self.assertEqual(result.mails_sent, 0)
         self.assertEqual(len(result.mail_failures), 2)
+        self.assertFalse(result.summary_sent)
         self.course.refresh_from_db()
         self.assertTrue(self.course.is_cancelled)
         self.assertEqual(self._credits(self.anna), 3)
@@ -128,6 +174,7 @@ class CancelCourseAdminTest(CourseCancellationBase):
         resp = self.client.post(self.cancel_url, follow=True)
         self.assertRedirects(resp, self.change_url)
         self.assertContains(resp, 'Kurs abgesagt: 2 Buchung(en) storniert')
+        self.assertContains(resp, 'Zusammenfassung an hebammen@mileja.ch: versendet')
         self.assertContains(resp, 'Abgesagt am')
         self.assertNotContains(resp, 'Kurs absagen</button>')
         self.course.refresh_from_db()
