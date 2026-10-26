@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'users.middleware.RequirePhoneMiddleware',  # Natelnummer ist Pflicht
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -191,6 +192,11 @@ LOGOUT_REDIRECT_URL = '/admin/'
 
 # Shared Secret fuer die interne Workbench-API (X-API-KEY-Header)
 WORKBENCH_API_KEY = env('WORKBENCH_API_KEY', default='')
+
+# Ausgehende Calls an die Workbench (sync_phones_from_workbench). Eigener Key,
+# angelegt in der Workbench unter API -> Keys (dort nur gehasht gespeichert).
+WORKBENCH_URL = env('WORKBENCH_URL', default='http://miwb-prod:8001')
+WORKBENCH_OUTBOUND_API_KEY = env('WORKBENCH_OUTBOUND_API_KEY', default='')
 
 # Stripe
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY', default='')

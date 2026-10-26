@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %} {% block content %} {% load static %}
+<div class="text-white">
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-xl md:text-3xl text-[#00df9a]">Natelnummer</p>
+  </div>
+  <div
+    class="bg-[#00df9a] rounded-xl p-4 md:p-8 max-w-[620px] flex flex-col justfiy-center mx-auto"
+  >
+    {% if is_required %}
+    <p class="mb-4">
+      Damit wir Dich bei kurzfristigen Änderungen oder Absagen eines Kurses
+      (z. B. bei Krankheit der Kursleiterin) rasch erreichen können, brauchen
+      wir Deine Natelnummer. Bitte erfasse sie, um fortzufahren.
+    </p>
+    {% else %}
+    <p class="mb-4">
+      Unter dieser Nummer erreichen wir Dich bei kurzfristigen Kursänderungen.
+    </p>
+    {% endif %}
+    <form action="{% url 'phone' %}" method="post" class="col-span-1">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}" />
+      <label for="id_phone" class="block">Natelnummer</label>
+      {{ form.phone }}
+      {% if form.phone.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.phone.errors.0 }}</p>
+      {% endif %}
+
+      <div class="flex flex-col items-center justify-center">
+        <button
+          class="bg-white text-black p-4 rounded-xl m-8 border-4 border-solid border-black"
+        >
+          Speichern
+        </button>
+      </div>
+    </form>
+    {% if not is_required %}
+    <a href="{% url 'my-account' %}" class="text-center underline">Zurück zu Mein Konto</a>
+    {% endif %}
+  </div>
+  {% if is_required %}
+  <p class="text-center mt-6 text-sm">
+    <a href="{% url 'logout' %}" class="underline">Abmelden</a>
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

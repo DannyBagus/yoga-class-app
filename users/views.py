@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm, CustomAuthenticateForm
+from .forms import CustomUserCreationForm, CustomAuthenticateForm, PhoneForm
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth import authenticate, login, logout
@@ -11,8 +11,10 @@ from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.utils.http import url_has_allowed_host_and_scheme
 from core.models import News
-from users.models import Credits, PurchaseTransaction
+from users.models import Credits, PurchaseTransaction, Profile
 from course.models import Booking
 
 def register_view(request):
@@ -22,6 +24,7 @@ def register_view(request):
             user = form.save(commit=False)
             user.is_active = False # Deactivates account until it is confirmed
             user.save()
+            Profile.objects.update_or_create(user=user, defaults={'phone': form.cleaned_data['phone']})
             
             # Send verification email
             current_site = get_current_site(request)
@@ -121,6 +124,34 @@ class CustomPasswordResetView(PasswordResetView):
             html_message=message  # Use the rendered HTML
         )
     
+@login_required(login_url='login')
+def phone_view(request):
+    """Natelnummer erfassen/aendern.
+
+    Die RequirePhoneMiddleware leitet jeden User ohne Nummer hierher um; die
+    Seite hat bewusst keinen Abbrechen-Weg (nur Speichern oder Logout).
+    """
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    next_url = request.POST.get('next') or request.GET.get('next') or ''
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        next_url = ''
+
+    if request.method == 'POST':
+        form = PhoneForm(request.POST)
+        if form.is_valid():
+            profile.phone = form.cleaned_data['phone']
+            profile.save(update_fields=['phone'])
+            messages.success(request, "Danke! Deine Natelnummer wurde gespeichert.")
+            return redirect(next_url or 'my-account')
+    else:
+        form = PhoneForm(initial={'phone': profile.phone})
+
+    return render(request, 'users/phone.html', {
+        'form': form,
+        'next': next_url,
+        'is_required': not profile.phone,
+    })
+
 def my_account(request):
     nav_content = request.GET.get('navigate')
     
@@ -164,7 +195,8 @@ def my_account(request):
     if nav_content == 'gtc':      
         return render(request, 'partials/gtc.html')
     
-    return render(request, 'users/my_account.html')
+    phone = Profile.objects.filter(user=request.user).values_list('phone', flat=True).first() if request.user.is_authenticated else ''
+    return render(request, 'users/my_account.html', {'phone': phone})
     
 
 def news_item(request):

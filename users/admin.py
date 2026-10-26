@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-from .models import Credits, PurchaseTransaction
+from .models import Credits, PurchaseTransaction, Profile
 from course.models import Booking 
 
 # --- 1. Custom Admin für Credits ---
@@ -46,10 +46,22 @@ class BookingInline(admin.TabularInline):
     get_course_date.short_description = "Kursdatum"
     get_course_date.admin_order_field = 'course__date'
 
+class ProfileInline(admin.StackedInline):
+    model = Profile
+    can_delete = False
+    verbose_name_plural = "Profil"
+
 class UserAdmin(BaseUserAdmin):
-    inlines = [BookingInline]
+    inlines = [ProfileInline, BookingInline]
     # Optional: Zeigt Credits direkt in der User-Übersicht als Spalte an (wenn gewünscht)
-    list_display = BaseUserAdmin.list_display + ('get_credits',)
+    list_display = BaseUserAdmin.list_display + ('get_phone', 'get_credits',)
+    list_select_related = ('profile', 'credits')
+    search_fields = BaseUserAdmin.search_fields + ('profile__phone',)
+
+    def get_phone(self, obj):
+        return obj.profile.phone if hasattr(obj, 'profile') else ''
+    get_phone.short_description = "Natel"
+    get_phone.admin_order_field = 'profile__phone'
 
     def get_credits(self, obj):
         # Versucht das Credit-Objekt zu holen, falls es existiert

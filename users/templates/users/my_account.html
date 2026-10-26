@@ -7,6 +7,10 @@
     class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
   >
     <p class="text-xl md:text-3xl text-[#00df9a]">Mein Konto</p>
+    <p class="text-sm mt-2">
+      Natel: {{ phone|default:"nicht erfasst" }} ·
+      <a href="{% url 'phone' %}?next={% url 'my-account' %}" class="underline">ändern</a>
+    </p>
   </div>
 
   <!-- navigation buttons -->

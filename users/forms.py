@@ -5,8 +5,29 @@ from django.core import signing
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
 
+from .phone import normalize_phone
+
+
+class PhoneField(forms.CharField):
+    """Natelnummer, wird beim Validieren auf E.164 normalisiert (+41791234567)."""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault('label', 'Natelnummer')
+        kwargs.setdefault('max_length', 30)
+        kwargs.setdefault('widget', forms.TextInput(attrs={
+            'type': 'tel',
+            'autocomplete': 'tel',
+            'placeholder': '079 123 45 67',
+        }))
+        super().__init__(**kwargs)
+
+    def clean(self, value):
+        value = super().clean(value)
+        return normalize_phone(value) if value else value
+
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    phone = PhoneField(required=True)
 
     # --- Bot-Schutz ---------------------------------------------------------
     # Honeypot: echte Nutzer sehen dieses Feld nicht (CSS-versteckt im Template)
@@ -27,7 +48,7 @@ class CustomUserCreationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
 
         input_class = "w-full rounded-lg p-3 mb-2 text-black bg-white border border-gray-300 focus:ring-2 focus:ring-[#e46aeb] focus:border-transparent focus:outline-none"
-        for field_name in ('username', 'email', 'first_name', 'last_name', 'password1', 'password2'):
+        for field_name in ('username', 'email', 'phone', 'first_name', 'last_name', 'password1', 'password2'):
             self.fields[field_name].widget.attrs['class'] = input_class
 
         # Frischen signierten Zeitstempel nur fuer das Render (ungebundenes Formular)
@@ -57,6 +78,13 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
+
+class PhoneForm(forms.Form):
+    phone = PhoneField(required=True)
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields['phone'].widget.attrs['class'] = "w-full rounded-lg p-3 mb-2 text-black bg-white border border-gray-300 focus:ring-2 focus:ring-[#e46aeb] focus:border-transparent focus:outline-none"
 
 class CustomAuthenticateForm(AuthenticationForm):
     

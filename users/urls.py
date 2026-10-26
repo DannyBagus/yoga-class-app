@@ -10,6 +10,7 @@ urlpatterns = [
     path('logout/', views.logout_user, name='logout'),
     path('login/', views.login_user, name='login'),
     path('mein-konto/', views.my_account, name='my-account'),
+    path('telefonnummer/', views.phone_view, name='phone'),
     path('news/', views.news_item, name='news-item'),
     path('purchase-credits/', views.purchase_credits, name='confirm-purchase'),
     path('checkout/', stripe_views.create_checkout_session, name='create-checkout'),

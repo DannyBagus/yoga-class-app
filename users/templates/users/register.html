@@ -34,6 +34,13 @@
       <p class="text-red-500 text-xs mb-2">{{ form.email.errors.0 }}</p>
       {% endif %}
 
+      <label for="id_phone" class="block">Natelnummer</label>
+      {{ form.phone }}
+      <!-- Error for phone -->
+      {% if form.phone.errors %}
+      <p class="text-red-500 text-xs mb-2">{{ form.phone.errors.0 }}</p>
+      {% endif %}
+
       <label for="id_first_name" class="block">Vorname</label>
       {{ form.first_name }}
       <!-- Error for First Name -->

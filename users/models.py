@@ -24,7 +24,34 @@ class Credits(models.Model):
 def create_user_credits(sender, instance, created, **kwargs):
     if created:
         Credits.objects.create(user=instance, number=0)
-        
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
+    phone = models.CharField(
+        "Natelnummer",
+        max_length=20,
+        blank=True,
+        default='',
+        help_text="Format +41791234567. Für kurzfristige Kursabsagen."
+    )
+
+    class Meta:
+        verbose_name = ("Profil")
+        verbose_name_plural = ("Profile")
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}: {self.phone or '-'}"
+
+# Signal to create a Profile entry when a new User is created
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.get_or_create(user=instance)
+
 
 class PurchaseTransaction(models.Model):
     date = models.DateField(
