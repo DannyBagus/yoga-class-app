@@ -168,6 +168,8 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 DEFAULT_FROM_EMAIL = 'admin@mileja.ch'
+# Basis-URL fuer Links in E-Mails (ohne Request-Kontext, z. B. Absage-Mails)
+SITE_URL = env('SITE_URL', default='https://kurse.mileja.ch')
 SERVER_EMAIL = 'admin@mileja.ch'
 
 # default date input format

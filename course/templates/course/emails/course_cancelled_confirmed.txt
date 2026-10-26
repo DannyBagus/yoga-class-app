@@ -1,0 +1,10 @@
+{{ name }} hat den Erhalt der Kursabsage bestätigt.
+
+Kurs: {{ course.category.name }} - {{ course.name }}, {{ course_date }}, {{ course_time }} Uhr
+Bestätigt am: {{ confirmed_at }}
+E-Mail: {{ email|default:"-" }}
+Natel: {{ phone|default:"nicht erfasst" }}
+
+{% if open %}Noch nicht bestätigt: {{ open }} Teilnehmerin(nen). Details im Admin auf der Kursseite.{% else %}Alle Teilnehmerinnen haben den Erhalt bestätigt.{% endif %}
+
+Mileja Yoga & Pilates · kurse.mileja.ch

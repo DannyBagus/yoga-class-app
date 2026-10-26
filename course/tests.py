@@ -1,3 +1,4 @@
+import re
 from datetime import date, time, timedelta
 from unittest import mock
 
@@ -9,7 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from course.cancellation import CourseAlreadyCancelled, cancel_course
-from course.models import Booking, Category, Courses
+from course.models import Booking, CancellationNotice, Category, Courses
 from users.models import Credits
 
 
@@ -68,7 +69,7 @@ class CancelCourseServiceTest(CourseCancellationBase):
         self.assertIn('Kursabsage: Yoga - Yoga Flow', msg.subject)
         self.assertIn('3 Credit(s)', msg.body)
         self.assertIn('3 Credit(s)', msg.alternatives[0][0])
-        self.assertIn('Bitte bestätige kurz, dass Du die Nachricht erhalten hast.', msg.body)
+        self.assertIn('Bitte bestätige kurz, dass Du die Nachricht erhalten hast:', msg.body)
         self.assertIn('Bitte bestätige kurz, dass Du die Nachricht erhalten hast.', msg.alternatives[0][0])
 
     def test_summary_mail_lists_participants(self):
@@ -226,3 +227,81 @@ class CancelledCourseFrontendTest(CourseCancellationBase):
         resp = self.client.get(reverse('send_course_reminder'))
         self.assertContains(resp, 'Es findet heute kein Kurs statt.')
         self.assertEqual(len(mail.outbox), 0)
+
+
+class ConfirmReceiptTest(CourseCancellationBase):
+    def setUp(self):
+        super().setUp()
+        cancel_course(self.course.pk)
+        self.anna_mail = next(m for m in mail.outbox if m.to == ['anna@example.com'])
+        match = re.search(r'https://kurse\.mileja\.ch(/kurse/absage/[^/\s]+/)', self.anna_mail.body)
+        self.url = match.group(1)
+        mail.outbox.clear()
+
+    def _notice(self, user):
+        return CancellationNotice.objects.get(course=self.course, user=user)
+
+    def test_notices_created_for_all_participants(self):
+        notices = CancellationNotice.objects.filter(course=self.course)
+        self.assertEqual(notices.count(), 2)
+        self.assertTrue(all(n.mail_sent and n.confirmed_at is None for n in notices))
+        self.assertEqual((self._notice(self.anna).credits_before, self._notice(self.anna).credits_after), (2, 3))
+
+    def test_mail_contains_confirm_button(self):
+        html = self.anna_mail.alternatives[0][0]
+        self.assertIn('Erhalt bestätigen', html)
+        self.assertIn(f'https://kurse.mileja.ch{self.url}', html)
+
+    def test_get_shows_button_without_confirming(self):
+        resp = self.client.get(self.url)
+        self.assertContains(resp, 'Erhalt bestätigen')
+        self.assertContains(resp, 'Hallo Anna')
+        self.assertIsNone(self._notice(self.anna).confirmed_at)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_post_confirms_and_notifies_team_once(self):
+        resp = self.client.post(self.url)
+        self.assertContains(resp, 'Danke, Anna!')
+        self.assertIsNotNone(self._notice(self.anna).confirmed_at)
+        self.assertIsNone(self._notice(self.berta).confirmed_at)
+        self.assertEqual(len(mail.outbox), 1)
+        team = mail.outbox[0]
+        self.assertEqual(team.to, ['hebammen@mileja.ch'])
+        self.assertEqual(team.reply_to, ['anna@example.com'])
+        self.assertIn('Erhalt bestätigt: Anna Muster', team.subject)
+        self.assertIn('Noch nicht bestätigt: 1', team.body)
+
+        # Zweiter Klick: keine weitere Mail, Seite zeigt weiterhin Dank
+        resp = self.client.post(self.url)
+        self.assertContains(resp, 'Danke, Anna!')
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_all_confirmed_message(self):
+        CancellationNotice.objects.filter(user=self.berta).update(confirmed_at=timezone.now())
+        self.client.post(self.url)
+        self.assertIn('Alle Teilnehmerinnen haben den Erhalt bestätigt.', mail.outbox[0].body)
+
+    def test_invalid_token(self):
+        resp = self.client.get('/kurse/absage/manipuliert/')
+        self.assertEqual(resp.status_code, 404)
+        self.assertContains(resp, 'ungültig oder abgelaufen', status_code=404)
+        resp = self.client.post(self.url[:-2] + 'x/')
+        self.assertEqual(resp.status_code, 404)
+        self.assertIsNone(self._notice(self.anna).confirmed_at)
+
+    def test_admin_shows_confirmation_status(self):
+        self.client.post(self.url)
+        admin_user = User.objects.create_superuser('boss', 'boss@example.com', 'pw')
+        self.client.force_login(admin_user, backend='django.contrib.auth.backends.ModelBackend')
+        resp = self.client.get(reverse('admin:course_courses_change', args=[self.course.pk]))
+        self.assertContains(resp, 'Absage-Benachrichtigungen')
+        self.assertContains(resp, '✔')
+        self.assertContains(resp, 'offen')
+
+
+class NoticeMailFailureTest(CourseCancellationBase):
+    def test_notice_marks_failed_mail(self):
+        with mock.patch('course.cancellation.EmailMultiAlternatives.send', side_effect=OSError('smtp down')):
+            cancel_course(self.course.pk)
+        self.assertFalse(CancellationNotice.objects.filter(course=self.course, mail_sent=True).exists())
+        self.assertEqual(CancellationNotice.objects.filter(course=self.course).count(), 2)

@@ -8,4 +8,5 @@ urlpatterns = [
     path('cancel-booking/', cancel_booking, name="cancel-booking"),
     path('show-attendees/', show_attendees, name="show-attendees"),
     path('teilnehmer-abfrage/', send_course_reminder, name='send_course_reminder'),
+    path('absage/<str:token>/', confirm_cancellation_receipt, name='confirm-cancellation-receipt'),
     ]

@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
 from course.models import Courses, Booking
+from course.cancellation import confirm_receipt, notice_from_token
 from users.models import Credits
 from django.contrib.auth.models import User
 from django.views.generic import ListView
@@ -241,3 +242,23 @@ def send_course_reminder(request):
             )
     
     return HttpResponse('Teilnehmerliste wurde erfolgreich versendet.')
+
+def confirm_cancellation_receipt(request, token):
+    ''' Landeseite des "Erhalt bestaetigen"-Buttons in der Absage-Mail.
+
+    GET zeigt nur die Seite; bestaetigt wird erst per POST (Button), weil
+    Mail-Scanner Links in E-Mails automatisch aufrufen.
+    '''
+    notice = notice_from_token(token)
+    if notice is None:
+        return render(request, 'course/cancellation_confirm.html', {'invalid': True}, status=404)
+
+    if request.method == 'POST':
+        confirm_receipt(notice)
+        notice.refresh_from_db(fields=['confirmed_at'])
+
+    return render(request, 'course/cancellation_confirm.html', {
+        'notice': notice,
+        'course_date': notice.course.date.strftime('%d.%m.%Y'),
+        'course_time': notice.course.start.strftime('%H:%M'),
+    })

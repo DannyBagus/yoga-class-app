@@ -13,4 +13,7 @@ Absage-E-Mails versendet: {{ mails_sent }}{% if mail_failures %}, FEHLGESCHLAGEN
   Credits: {{ p.credits_before }} -> {{ p.credits_after }}
 {% empty %}Es waren keine Teilnehmerinnen gebucht.
 {% endfor %}
+Jede Bestätigung einer Kundin („Erhalt bestätigen“) kommt als eigene Mail.
+Übersicht im Admin auf der Kursseite.
+
 Mileja Yoga & Pilates · kurse.mileja.ch

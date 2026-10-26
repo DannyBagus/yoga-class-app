@@ -87,3 +87,32 @@ class Booking(models.Model):
         
     def __str__(self) -> str:
         return f"{self.user} - {self.course} ({self.date})"
+
+class CancellationNotice(models.Model):
+    ''' eine bei einer Kursabsage benachrichtigte Kundin (Buchungen werden geloescht,
+    dieser Eintrag bleibt) inkl. Erhaltsbestaetigung per Link in der Absage-Mail '''
+    course = models.ForeignKey(
+        Courses,
+        related_name="cancellation_notices",
+        on_delete=models.CASCADE,
+        verbose_name="Kurs"
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Kundin"
+    )
+    credits_before = models.IntegerField("Credits vorher")
+    credits_after = models.IntegerField("Credits nachher")
+    mail_sent = models.BooleanField("Absage-Mail versendet", default=False)
+    notified_at = models.DateTimeField("Benachrichtigt am", default=timezone.now)
+    confirmed_at = models.DateTimeField("Erhalt bestätigt am", null=True, blank=True)
+
+    class Meta:
+        ordering = ["notified_at"]
+        unique_together = [("course", "user")]
+        verbose_name = "Absage-Benachrichtigung"
+        verbose_name_plural = "Absage-Benachrichtigungen"
+
+    def __str__(self) -> str:
+        return f"{self.user} - {self.course}"

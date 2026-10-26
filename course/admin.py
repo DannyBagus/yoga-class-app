@@ -7,8 +7,8 @@ from django.utils import timezone
 from django.utils.html import format_html
 
 from users.models import Credits
-from .cancellation import SUMMARY_RECIPIENTS, CourseAlreadyCancelled, cancel_course
-from .models import Courses, Category, Booking
+from .cancellation import SUMMARY_RECIPIENTS, SWISS_TZ, CourseAlreadyCancelled, cancel_course
+from .models import CancellationNotice, Courses, Category, Booking
 
 
 # --- Helfer -----------------------------------------------------------------
@@ -92,6 +92,38 @@ class BookingInline(admin.TabularInline):
     customer_credits.short_description = "Credits"
 
 
+class CancellationNoticeInline(admin.TabularInline):
+    ''' Bei der Absage benachrichtigte Kundinnen inkl. Erhaltsbestaetigung (nur lesen) '''
+    model = CancellationNotice
+    extra = 0
+    can_delete = False
+    verbose_name_plural = "Absage-Benachrichtigungen"
+    fields = ['customer_link', 'customer_phone', 'credits_before', 'credits_after',
+              'mail_sent', 'confirmation']
+    readonly_fields = fields
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('user', 'user__profile')
+
+    def customer_link(self, obj):
+        return _user_link(obj.user)
+    customer_link.short_description = "Kundin"
+
+    def customer_phone(self, obj):
+        return _user_phone(obj.user)
+    customer_phone.short_description = "Telefon"
+
+    def confirmation(self, obj):
+        if obj.confirmed_at:
+            return format_html('<span style="color:#047857;font-weight:600;">✔ {}</span>',
+                               timezone.localtime(obj.confirmed_at, SWISS_TZ).strftime('%d.%m.%Y %H:%M'))
+        return format_html('<span style="color:#ba2121;font-weight:600;">{}</span>', "offen")
+    confirmation.short_description = "Erhalt bestätigt"
+
+
 # --- Kurse ------------------------------------------------------------------
 
 @admin.register(Courses)
@@ -108,6 +140,12 @@ class CourseAdmin(admin.ModelAdmin):
     ordering = ['-date']
     list_select_related = ('category',)
     inlines = [BookingInline]
+
+    def get_inlines(self, request, obj):
+        # Abgesagte Kurse: zusaetzlich wer benachrichtigt wurde und wer bestaetigt hat
+        if obj is not None and obj.is_cancelled:
+            return [CancellationNoticeInline, BookingInline]
+        return [BookingInline]
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(_booking_count=Count('bookings'))

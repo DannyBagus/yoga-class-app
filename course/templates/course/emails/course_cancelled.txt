@@ -8,7 +8,8 @@ leider müssen wir den folgenden Kurs absagen:
 Deine Buchung wurde storniert und Dir wurde 1 Credit gutgeschrieben.
 Dein neuer Stand: {{ credits }} Credit(s).
 
-Bitte bestätige kurz, dass Du die Nachricht erhalten hast.
+Bitte bestätige kurz, dass Du die Nachricht erhalten hast:
+{{ confirm_url }}
 
 Du kannst den Credit für einen anderen Kurs verwenden:
 https://kurse.mileja.ch/kurse/

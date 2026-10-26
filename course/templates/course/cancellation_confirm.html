@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %} {% block content %}
+<div class="text-white">
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-xl md:text-3xl text-[#00df9a]">Kursabsage</p>
+  </div>
+  <div
+    class="bg-[#00df9a] text-black rounded-xl p-4 md:p-8 max-w-[620px] flex flex-col mx-auto text-center"
+  >
+    {% if invalid %}
+    <p class="text-lg">
+      Dieser Link ist ungültig oder abgelaufen. Bitte melde Dich direkt bei uns:
+      <a href="mailto:hebammen@mileja.ch" class="underline">hebammen@mileja.ch</a>.
+    </p>
+    {% else %}
+    <p class="text-xl font-bold">{{ notice.course.category.name }} - {{ notice.course.name }}</p>
+    <p class="text-lg mb-6">{{ course_date }}, {{ course_time }} Uhr (abgesagt)</p>
+    {% if notice.confirmed_at %}
+    <p class="text-xl font-bold mb-2">Danke, {{ notice.user.first_name|default:notice.user.username }}!</p>
+    <p>Du hast den Erhalt der Absage bestätigt. Dein Credit wurde gutgeschrieben.</p>
+    <a href="{% url 'courses' %}">
+      <button class="bg-white text-black p-4 rounded-xl mt-8 border-4 border-solid border-black">
+        Anderen Kurs buchen
+      </button>
+    </a>
+    {% else %}
+    <p class="mb-2">Hallo {{ notice.user.first_name|default:notice.user.username }}, bitte bestätige kurz, dass Du die Absage erhalten hast.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="bg-white text-black p-4 rounded-xl mt-6 border-4 border-solid border-black font-bold">
+        Erhalt bestätigen
+      </button>
+    </form>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
