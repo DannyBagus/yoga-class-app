@@ -22,6 +22,18 @@ def _user_link(user):
     return format_html('<a href="{}">{}</a>', url, name)
 
 
+def _user_phone(user):
+    ''' Natelnummer mit tel:- und WhatsApp-Link (fuer kurzfristige Kursinfos) '''
+    profile = getattr(user, "profile", None)
+    phone = profile.phone if profile else ""
+    if not phone:
+        return "—"
+    return format_html(
+        '<a href="tel:{0}">{0}</a> · <a href="https://wa.me/{1}" target="_blank" rel="noopener">WhatsApp</a>',
+        phone, phone.lstrip('+'),
+    )
+
+
 def _user_credits(user):
     credits = getattr(user, "credits", None)
     return credits.number if credits else 0
@@ -60,13 +72,20 @@ class BookingInline(admin.TabularInline):
     model = Booking
     extra = 0
     autocomplete_fields = ['user']
-    fields = ['user', 'customer_link', 'customer_credits', 'date']
-    readonly_fields = ['customer_link', 'customer_credits']
+    fields = ['user', 'customer_link', 'customer_phone', 'customer_credits', 'date']
+    readonly_fields = ['customer_link', 'customer_phone', 'customer_credits']
     can_delete = True  # Buchungen dürfen von der Kursseite aus gelöscht werden
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('user', 'user__profile', 'user__credits')
 
     def customer_link(self, obj):
         return _user_link(obj.user) if obj.pk else "—"
     customer_link.short_description = "Kundin (Profil)"
+
+    def customer_phone(self, obj):
+        return _user_phone(obj.user) if obj.pk and obj.user_id else "—"
+    customer_phone.short_description = "Telefon"
 
     def customer_credits(self, obj):
         return _user_credits(obj.user) if obj.pk and obj.user_id else "—"

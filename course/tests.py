@@ -112,6 +112,18 @@ class CancelCourseAdminTest(CourseCancellationBase):
         self.assertContains(resp, 'Berta Muster: 0 → 1 Credits')
         self.assertContains(resp, 'confirm(')
 
+    def test_booking_inline_shows_phone(self):
+        resp = self.client.get(self.change_url)
+        self.assertContains(resp, 'Telefon')
+        self.assertContains(resp, '<a href="tel:+41791234567">+41791234567</a>', count=2)
+        self.assertContains(resp, 'https://wa.me/41791234567', count=2)
+
+    def test_booking_inline_without_phone(self):
+        self.berta.profile.phone = ''
+        self.berta.profile.save()
+        resp = self.client.get(self.change_url)
+        self.assertContains(resp, 'tel:+41791234567', count=1)
+
     def test_post_cancels_and_logs(self):
         resp = self.client.post(self.cancel_url, follow=True)
         self.assertRedirects(resp, self.change_url)
