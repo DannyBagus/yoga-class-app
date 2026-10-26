@@ -18,14 +18,16 @@ from users.phone import normalize_phone
 class NormalizePhoneTest(SimpleTestCase):
     def test_swiss_variants(self):
         for raw in ('079 123 45 67', '0791234567', '079-123.45.67', '+41 79 123 45 67',
-                    '0041791234567', '+41 (0)79 123 45 67', ' +41791234567 '):
+                    '0041791234567', '+41 (0)79 123 45 67', ' +41791234567 ',
+                    '791234567', '+410791234567'):
             self.assertEqual(normalize_phone(raw), '+41791234567', raw)
 
     def test_foreign_number(self):
         self.assertEqual(normalize_phone('+49 151 23456789'), '+4915123456789')
 
     def test_invalid(self):
-        for raw in ('', 'abc', '12345', '079 123 45', '+41 79 123 45 678', '+0791234567'):
+        for raw in ('', 'abc', '12345', '079 123 45', '+41 79 123 45 678', '+0791234567',
+                    '0763168673Riehenstrasse 149', '491234567'):
             with self.assertRaises(ValidationError, msg=raw):
                 normalize_phone(raw)
 

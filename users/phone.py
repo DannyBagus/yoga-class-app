@@ -23,6 +23,12 @@ def normalize_phone(raw):
     elif value.startswith('0'):
         # Nationale Schweizer Schreibweise: 079... -> +4179...
         value = '+41' + value[1:]
+    elif re.fullmatch(r'7\d{8}', value):
+        # Schweizer Natel ohne fuehrende 0 (typisch nach Excel-Import): 79... -> +4179...
+        value = '+41' + value
+    if value.startswith('+410'):
+        # "+41 079 ..." -> 0 nach der Laendervorwahl entfernen
+        value = '+41' + value[4:]
 
     if not re.fullmatch(r'\+[1-9]\d{7,14}', value):
         raise ValidationError(INVALID_PHONE)
