@@ -1,0 +1,68 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .cancel-course { position: relative; display: inline-block; }
+  .cancel-course button {
+    background: #ba2121; color: #fff; border: 0; border-radius: 15px;
+    padding: 3px 12px; font-size: 0.6875rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; line-height: 1.6;
+  }
+  .cancel-course button:hover, .cancel-course button:focus { background: #8f1919; }
+  .cancel-course .cancel-tooltip {
+    display: none; position: absolute; right: 0; top: calc(100% + 8px); z-index: 1000;
+    width: 360px; padding: 12px 14px; border-radius: 6px; text-align: left;
+    background: #fff; color: #222; border: 2px solid #ba2121;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    font-size: 0.8125rem; line-height: 1.45; text-transform: none; letter-spacing: 0; font-weight: normal;
+  }
+  .cancel-course:hover .cancel-tooltip, .cancel-course:focus-within .cancel-tooltip { display: block; }
+  .cancel-tooltip strong { color: #ba2121; }
+  /* Admin-Styles fuer .object-tools li (float, feste Hoehe) im Tooltip aufheben */
+  .object-tools .cancel-tooltip ul { display: block; margin: 6px 0; padding-left: 18px; }
+  .object-tools .cancel-tooltip li {
+    display: list-item; list-style: disc; float: none; height: auto;
+    margin: 0; padding: 2px 0; line-height: 1.45;
+  }
+  .object-tools .cancel-tooltip .refunds li { list-style: circle; }
+  .cancel-course-done { background: #999 !important; color: #fff !important; }
+</style>
+{% endblock %}
+
+{% block object-tools-items %}
+{% if original.is_cancelled %}
+<li><span class="cancel-course-done" style="display:inline-block; padding:3px 12px; border-radius:15px; font-size:0.6875rem; text-transform:uppercase;">
+  Abgesagt am {{ original.cancelled_at|date:"d.m.Y H:i"|default:"–" }}
+</span></li>
+{% elif cancel_url %}
+<li>
+  <form method="post" action="{{ cancel_url }}" class="cancel-course"
+        onsubmit="return confirm('Kurs „{{ original|escapejs }}“ wirklich absagen?\n\n{{ cancel_bookings|length }} Buchung(en) werden storniert, die Credits gutgeschrieben und die Kundinnen per E-Mail informiert.\n\nDas kann nicht automatisch rückgängig gemacht werden.');">
+    {% csrf_token %}
+    <button type="submit" aria-describedby="cancel-tooltip">Kurs absagen</button>
+    <div class="cancel-tooltip" id="cancel-tooltip" role="tooltip">
+      <strong>Was beim Klick passiert:</strong>
+      <ul>
+        <li>Der Kurs wird als <strong>abgesagt</strong> markiert: im Kursplan grau und nicht mehr buchbar.</li>
+        {% if cancel_bookings %}
+        <li><strong>{{ cancel_bookings|length }} Buchung(en)</strong> werden storniert.</li>
+        <li>Jede Kundin erhält <strong>1 Credit</strong> zurück (auch innerhalb der 24h-Frist):
+          <ul class="refunds">
+            {% for name, credits in cancel_bookings %}
+            <li>{{ name }}: {{ credits }} → {{ credits|add:1 }} Credits</li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li>Jede Kundin erhält eine <strong>Absage-E-Mail</strong>.</li>
+        {% else %}
+        <li>Es gibt keine Buchungen, also werden keine Credits gutgeschrieben und keine E-Mails versendet.</li>
+        {% endif %}
+        <li>Die Absage wird in der Kurs-Historie protokolliert.</li>
+      </ul>
+      Vor dem Ausführen kommt eine Bestätigung. Rückgängig machen geht nicht automatisch.
+    </div>
+  </form>
+</li>
+{% endif %}
+{{ block.super }}
+{% endblock %}

@@ -1,11 +1,13 @@
 from django.contrib import admin, messages
 from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
-from django.urls import reverse
+from django.urls import path, reverse
 from django.utils import timezone
 from django.utils.html import format_html
 
 from users.models import Credits
+from .cancellation import CourseAlreadyCancelled, cancel_course
 from .models import Courses, Category, Booking
 
 
@@ -75,8 +77,9 @@ class BookingInline(admin.TabularInline):
 
 @admin.register(Courses)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'topic', 'date', 'start', 'occupancy')
-    list_filter = (CourseUpcomingFilter, 'category', 'topic', 'date')
+    list_display = ('name', 'category', 'topic', 'date', 'start', 'occupancy', 'is_cancelled')
+    list_filter = (CourseUpcomingFilter, 'is_cancelled', 'category', 'topic', 'date')
+    readonly_fields = ('cancelled_at',)
     search_fields = (
         'name', 'topic', 'category__name',
         'bookings__user__first_name', 'bookings__user__last_name',
@@ -95,6 +98,63 @@ class CourseAdmin(admin.ModelAdmin):
         return format_html("<b>{}</b> gebucht · {} frei", obj._booking_count, obj.capacity)
     occupancy.short_description = "Belegung"
     occupancy.admin_order_field = '_booking_count'
+
+    # --- Kurs absagen (roter Button auf der Detailseite) ---
+
+    def get_urls(self):
+        custom = [
+            path('<path:object_id>/absagen/', self.admin_site.admin_view(self.cancel_course_view),
+                 name='course_courses_cancel'),
+        ]
+        return custom + super().get_urls()
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        course = self.get_object(request, object_id)
+        if course is not None and not course.is_cancelled:
+            bookings = course.bookings.select_related('user', 'user__credits')
+            extra_context = {
+                **(extra_context or {}),
+                'cancel_url': reverse('admin:course_courses_cancel', args=[course.pk]),
+                'cancel_bookings': [
+                    (f"{b.user.first_name} {b.user.last_name}".strip() or b.user.username,
+                     _user_credits(b.user))
+                    for b in bookings
+                ],
+            }
+        return super().change_view(request, object_id, form_url, extra_context)
+
+    def cancel_course_view(self, request, object_id):
+        course = get_object_or_404(Courses, pk=object_id)
+        change_url = reverse('admin:course_courses_change', args=[course.pk])
+        if request.method != 'POST' or not self.has_change_permission(request, course):
+            return redirect(change_url)
+
+        try:
+            result = cancel_course(course.pk)
+        except CourseAlreadyCancelled:
+            self.message_user(request, "Der Kurs war bereits abgesagt.", messages.WARNING)
+            return redirect(change_url)
+
+        refunds = ", ".join(
+            f"{u.first_name} {u.last_name} ({before}→{after})" for u, before, after in result.refunds
+        ) or "keine Buchungen"
+        course.refresh_from_db()
+        self.log_change(request, course,
+                        f"Kurs abgesagt. {len(result.refunds)} Buchung(en) storniert, "
+                        f"Credits gutgeschrieben: {refunds}. E-Mails versendet: {result.mails_sent}.")
+
+        self.message_user(
+            request,
+            f"Kurs abgesagt: {len(result.refunds)} Buchung(en) storniert, je 1 Credit gutgeschrieben, "
+            f"{result.mails_sent} E-Mail(s) versendet.",
+            messages.SUCCESS,
+        )
+        if result.mail_failures:
+            names = ", ".join(f"{u.first_name} {u.last_name} <{u.email or 'keine E-Mail'}>"
+                              for u in result.mail_failures)
+            self.message_user(request, f"E-Mail fehlgeschlagen, bitte telefonisch informieren: {names}",
+                              messages.ERROR)
+        return redirect(change_url)
 
 
 # --- Buchungen --------------------------------------------------------------

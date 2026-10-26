@@ -42,6 +42,14 @@ class Courses(models.Model):
     capacity = models.BigIntegerField(
         default=7,
         verbose_name="Anzahl Plätze")
+    is_cancelled = models.BooleanField(
+        default=False,
+        verbose_name="Abgesagt",
+        help_text="Abgesagte Kurse werden grau angezeigt und sind nicht buchbar.")
+    cancelled_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Abgesagt am")
     
     # Assign the default manager
     objects = models.Manager()  # Default manager

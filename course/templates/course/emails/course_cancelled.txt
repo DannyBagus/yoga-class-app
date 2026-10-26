@@ -1,0 +1,16 @@
+Hallo {{ user.first_name|default:user.username }},
+
+leider müssen wir den folgenden Kurs absagen:
+
+{{ course.category.name }} - {{ course.name }}
+{{ course_date }}, {{ course_time }} Uhr
+
+Deine Buchung wurde storniert und Dir wurde 1 Credit gutgeschrieben.
+Dein neuer Stand: {{ credits }} Credit(s).
+
+Du kannst den Credit für einen anderen Kurs verwenden:
+https://kurse.mileja.ch/kurse/
+
+Wir entschuldigen uns für die Umstände.
+
+Mileja Yoga & Pilates · kurse.mileja.ch

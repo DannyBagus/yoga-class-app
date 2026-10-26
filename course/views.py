@@ -82,7 +82,9 @@ def create_booking(request):
         course = Courses.objects.filter(pk=course_id).first()
         if course:
             if request.user.is_authenticated:
-                if course.capacity == 0:
+                if course.is_cancelled:
+                    messages.error(request, "Dieser Kurs wurde abgesagt und kann nicht gebucht werden.")
+                elif course.capacity == 0:
                     # Course is fully booked, show error message
                     messages.error(request, "Der Kurs ist bereits ausgebucht.")
                 else:
@@ -201,7 +203,7 @@ def send_course_reminder(request):
     today = timezone.now().date()
     
     # Find courses that are scheduled for later today
-    courses_today = Courses.objects.filter(date=today)
+    courses_today = Courses.objects.filter(date=today, is_cancelled=False)
     
     if not courses_today.exists():
         return HttpResponse('Es findet heute kein Kurs statt.')
