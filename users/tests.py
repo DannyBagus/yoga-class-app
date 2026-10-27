@@ -197,3 +197,39 @@ class SyncPhonesFromWorkbenchTest(TestCase):
     def test_missing_key_aborts(self):
         with self.assertRaises(CommandError):
             call_command('sync_phones_from_workbench', stdout=io.StringIO())
+
+
+class LoginRedirectTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('anna', 'anna@example.com', 'pw')
+        Profile.objects.filter(user=self.user).update(phone='+41791234567')
+        self.success = reverse('checkout-success') + '?session_id=cs_test_1'
+
+    def test_login_required_redirects_to_real_login_page(self):
+        resp = self.client.get(self.success)
+        self.assertRedirects(resp, f"{reverse('login')}?next=/users/checkout/success/%3Fsession_id%3Dcs_test_1",
+                             fetch_redirect_response=False)
+        self.assertEqual(self.client.get(resp['Location']).status_code, 200)
+
+    def test_login_page_keeps_next(self):
+        resp = self.client.get(reverse('login') + '?next=/kurse/')
+        self.assertContains(resp, 'name="next" value="/kurse/"')
+
+    def test_login_returns_to_next(self):
+        resp = self.client.post(reverse('login'), {'username': 'anna', 'password': 'pw', 'next': '/kurse/'})
+        self.assertRedirects(resp, '/kurse/', fetch_redirect_response=False)
+
+    def test_login_without_next_goes_to_account(self):
+        resp = self.client.post(reverse('login'), {'username': 'anna', 'password': 'pw'})
+        self.assertRedirects(resp, reverse('my-account'), fetch_redirect_response=False)
+
+    def test_external_next_ignored(self):
+        resp = self.client.get(reverse('login') + '?next=https://evil.example/')
+        self.assertNotContains(resp, 'evil.example')
+        resp = self.client.post(reverse('login'), {'username': 'anna', 'password': 'pw',
+                                                   'next': 'https://evil.example/'})
+        self.assertRedirects(resp, reverse('my-account'), fetch_redirect_response=False)
+
+    def test_failed_login_keeps_next(self):
+        resp = self.client.post(reverse('login'), {'username': 'anna', 'password': 'falsch', 'next': '/kurse/'})
+        self.assertRedirects(resp, f"{reverse('login')}?next=%2Fkurse%2F", fetch_redirect_response=False)

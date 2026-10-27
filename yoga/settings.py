@@ -189,6 +189,8 @@ OIDC_OP_JWKS_ENDPOINT = f'{OIDC_OP_BASE_URL}/application/o/mileja-yoga/jwks/'
 OIDC_RP_SIGN_ALGO = 'RS256'
 OIDC_RP_SCOPES = 'openid profile email groups'
 OIDC_OP_LOGOUT_ENDPOINT = f'{OIDC_OP_BASE_URL}/application/o/mileja-yoga/end-session/'
+# Ziel von @login_required (sonst Django-Default /accounts/login/ -> 404)
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/admin/'
 LOGOUT_REDIRECT_URL = '/admin/'
 

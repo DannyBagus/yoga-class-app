@@ -13,9 +13,17 @@ from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.urls import reverse
+from urllib.parse import urlencode
 from core.models import News
 from users.models import Credits, PurchaseTransaction, Profile
 from course.models import Booking
+
+def _safe_next_url(request, url):
+    ''' Rueckspruengziel nur innerhalb dieser Seite zulassen (kein Open Redirect) '''
+    if url and url_has_allowed_host_and_scheme(url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        return url
+    return ''
 
 def register_view(request):
     if request.method == "POST":
@@ -68,21 +76,21 @@ def login_user(request):
         else:
             username = identifier
         user = authenticate(request, username=username, password=password)
-        next = request.POST.get('next', None)  # Get next or None if not present
+        next_url = _safe_next_url(request, request.POST.get('next'))
         if user is not None:
             login(request, user)
-            if next:
-                return redirect(next)
-            else:
-                return redirect('my-account')
+            return redirect(next_url or 'my-account')
             
         else:
             messages.error(request, ("Du konntest nicht angemeldet werden. Versuche es erneut..."))
+            if next_url:
+                return redirect(f"{reverse('login')}?{urlencode({'next': next_url})}")
             return redirect('login')
     else:
         form = CustomAuthenticateForm()
+        next_url = _safe_next_url(request, request.GET.get('next'))
         
-        return render(request, 'users/login.html', { "form": form })
+        return render(request, 'users/login.html', { "form": form, "next": next_url })
     
 def activate(request, uidb64, token):
     try:
@@ -124,7 +132,7 @@ class CustomPasswordResetView(PasswordResetView):
             html_message=message  # Use the rendered HTML
         )
     
-@login_required(login_url='login')
+@login_required
 def phone_view(request):
     """Natelnummer erfassen/aendern.
 
@@ -132,9 +140,7 @@ def phone_view(request):
     Seite hat bewusst keinen Abbrechen-Weg (nur Speichern oder Logout).
     """
     profile, _ = Profile.objects.get_or_create(user=request.user)
-    next_url = request.POST.get('next') or request.GET.get('next') or ''
-    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
-        next_url = ''
+    next_url = _safe_next_url(request, request.POST.get('next') or request.GET.get('next'))
 
     if request.method == 'POST':
         form = PhoneForm(request.POST)
