@@ -33,6 +33,15 @@ services:
       traefik.http.services.yoga-app.loadbalancer.server.port: "8020"
       traefik.http.services.yoga-app.loadbalancer.server.scheme: "http"
     container_name: yoga-app
+    # Log-Rotation: ohne max-size waechst das json-file unbegrenzt, und ein
+    # Absturz (z. B. 05.10.2026) hinterlaesst NUL-Bytes, an denen
+    # `docker logs --since` fuer immer scheitert. Mit Rotation landet ein
+    # solcher Schaden in einer alten Datei, die nach 5x10 MB verschwindet.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   yoga-db:
     stop_grace_period: 60s
