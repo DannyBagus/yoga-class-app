@@ -25,16 +25,17 @@
     {% endif %}
   </header>
 
-  {# Filter: Chips mit aktivem Zustand (Alpine). Nach einer Buchung o. ae. #}
-  {# liefert der Server wieder alle Kurse, darum springt der Filter dann auf "Alle". #}
+  {# Filter: Chips mit aktivem Zustand (Alpine). Der aktive Filter steht in #}
+  {# #active-filter; Buchen/Abmelden/Warteliste schicken ihn per hx-include mit, #}
+  {# damit die Liste danach gefiltert bleibt. #}
   <div
     id="filter-buttons"
     role="group"
     aria-label="Kurse filtern"
     class="flex flex-wrap gap-2"
     x-data="{ selected: '' }"
-    @htmx:after-request.window="if (!$event.detail.pathInfo.requestPath.startsWith('{% url 'filter-courses' %}')) selected = ''"
   >
+    <input type="hidden" id="active-filter" name="filter" value="" :value="selected" />
     {% url 'filter-courses' as filter_url %}
     {% with chip="inline-flex items-center min-h-[44px] px-4 rounded-full text-sm font-medium ring-1 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white" on="bg-white text-black ring-white" off="text-white/80 ring-white/20 hover:ring-white/50 hover:text-white" %}
     <button

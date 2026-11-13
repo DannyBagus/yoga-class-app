@@ -13,7 +13,6 @@
 """
 import enum
 import logging
-from datetime import datetime
 
 from django.conf import settings
 from django.core import signing
@@ -24,7 +23,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from users.models import Credits
-from .booking import BookingResult, book_locked
+from .booking import BookingResult, book_locked, course_start
 from .cancellation import CUSTOMER_REPLY_TO, SWISS_TZ, _send_mail
 from .models import Booking, Courses, WaitlistEntry
 
@@ -58,9 +57,7 @@ _CLAIM_RESULTS = {
 
 
 def has_started(course):
-    """Kurszeiten sind Schweizer Ortszeit (die App selbst laeuft in UTC)."""
-    start = datetime.combine(course.date, course.start).replace(tzinfo=SWISS_TZ)
-    return timezone.now() >= start
+    return timezone.now() >= course_start(course)
 
 
 def waiting_count(course):
@@ -68,6 +65,13 @@ def waiting_count(course):
 
 
 # --- Eintragen / Austragen --------------------------------------------------
+
+def active_waitlists(user):
+    """Wartende Eintraege der Kundin fuer kommende, nicht abgesagte Kurse.
+    (Eintraege vergangener Kurse bleiben 'waiting' stehen und zaehlen nicht.)"""
+    return WaitlistEntry.objects.filter(
+        user=user, status=WaitlistEntry.WAITING, course__is_cancelled=False,
+        course__date__gte=timezone.localdate(timezone=SWISS_TZ))
 
 def join(user, course):
     """Traegt ``user`` auf die Warteliste ein (idempotent) oder wirft WaitlistError."""
@@ -81,9 +85,19 @@ def join(user, course):
             raise WaitlistError("Dieser Kurs hat bereits begonnen.")
         if course.capacity > 0:
             raise WaitlistError("Im Kurs sind noch Plätze frei – Du kannst direkt buchen.")
-        credits = Credits.objects.filter(user=user).values_list('number', flat=True).first() or 0
+        # Sperre pro Kundin: zwei parallele Eintragungen teilen sich keinen Credit
+        credits = (Credits.objects.select_for_update().filter(user=user)
+                   .values_list('number', flat=True).first() or 0)
         if credits < 1:
             raise WaitlistError("Für die Warteliste brauchst Du mindestens 1 Credit.")
+        # Pro aktiver Warteliste ist 1 Credit reserviert, sonst koennte die Kundin
+        # bei mehreren frei werdenden Plaetzen nicht alle einloesen.
+        elsewhere = active_waitlists(user).exclude(course=course).count()
+        if credits - elsewhere < 1:
+            raise WaitlistError(
+                f"Für die Warteliste brauchst Du pro Warteliste 1 Credit. Du hast {credits} Credit(s) "
+                f"und stehst schon auf {elsewhere} Warteliste(n). Kaufe weitere Credits oder trage "
+                f"Dich von einer anderen Warteliste aus.")
 
         entry, created = WaitlistEntry.objects.get_or_create(course=course, user=user)
         if not created and entry.status != WaitlistEntry.WAITING:

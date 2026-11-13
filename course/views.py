@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
 from course import waitlist
-from course.booking import BookingResult, book
+from course.booking import BookingResult, book, cancellation_refundable
 from course.models import Courses, Booking, WaitlistEntry
 from course.cancellation import confirm_receipt, notice_from_token
 from course.waitlist import ClaimResult, WaitlistError
@@ -30,6 +30,9 @@ def _decorate(courses, user):
         course.formatted_time = course.start.strftime('%H:%M')    # Format time as hour:minute
     if user.is_authenticated:
         booked = set(Booking.objects.filter(user=user).values_list('course_id', flat=True))
+        for course in courses:
+            if course.pk in booked:  # fuer die Rueckfrage beim Abmelden
+                course.cancel_refundable = cancellation_refundable(course)
         waitlisted = set(WaitlistEntry.objects.filter(user=user, status=WaitlistEntry.WAITING)
                          .values_list('course_id', flat=True))
     else:
@@ -37,10 +40,23 @@ def _decorate(courses, user):
     return {'courses': courses, 'booked_courses': booked, 'waitlisted_courses': waitlisted}
 
 
-def _render_course_list(request, courses=None):
-    if courses is None:
-        courses = Courses.upcoming_courses.upcoming()
-    return render(request, 'partials/course_list.html', _decorate(courses, request.user))
+_CATEGORY_FILTERS = {'yoga': 'Yoga', 'pilates': 'Pilates', 'mamifit': 'MamiFit'}
+
+
+def _filtered_courses(request):
+    """Kommende Kurse gemaess ``?filter=`` (Chips oben auf der Seite). Wird auch
+    nach Buchen/Abmelden/Warteliste angewendet, damit der Filter erhalten bleibt."""
+    courses = Courses.upcoming_courses.upcoming()
+    filter_type = request.GET.get('filter', '')
+    if filter_type in _CATEGORY_FILTERS:
+        courses = courses.filter(category__name=_CATEGORY_FILTERS[filter_type])
+    elif filter_type == 'my_courses' and request.user.is_authenticated:
+        courses = courses.filter(bookings__user=request.user)
+    return courses
+
+
+def _render_course_list(request):
+    return render(request, 'partials/course_list.html', _decorate(_filtered_courses(request), request.user))
 
 
 def _course_from_request(request):
@@ -64,17 +80,7 @@ class CourseListView(ListView):
 
 
 def filter_courses(request):
-    filter_type = request.GET.get('filter', 'all')
-    courses = Courses.upcoming_courses.upcoming()
-    if filter_type == 'yoga':
-        courses = courses.filter(category__name='Yoga')
-    elif filter_type == 'pilates':
-        courses = courses.filter(category__name='Pilates')
-    elif filter_type == 'mamifit':
-        courses = courses.filter(category__name='MamiFit')
-    elif filter_type == 'my_courses' and request.user.is_authenticated:
-        courses = courses.filter(bookings__user=request.user)
-    return _render_course_list(request, courses)
+    return _render_course_list(request)
 
 
 _BOOKING_ERRORS = {
@@ -104,12 +110,10 @@ def cancel_booking(request):
         if request.user.is_authenticated else None
 
     if booking:
-        # Course start time
-        course_start_time = timezone.make_aware(datetime.combine(course.date, course.start))
         credits, _ = Credits.objects.get_or_create(user=request.user, defaults={'number': 0})
 
-        # Check if the course starts in more than 24 hours
-        if course_start_time - timezone.now() > timezone.timedelta(hours=24):
+        # Credit zurueck nur bis 24 h vor Kursbeginn (Schweizer Zeit)
+        if cancellation_refundable(course):
             # Add credit back to user's balance
             credits.number += 1  # Assuming each booking gives 1 credit
             credits.save()

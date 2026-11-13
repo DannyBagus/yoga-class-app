@@ -63,6 +63,8 @@
           type="button"
           class="w-full min-h-[44px] rounded-xl px-4 text-sm font-medium text-white/80 ring-1 ring-white/20 transition-colors hover:text-red-300 hover:ring-red-300/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           hx-get="{% url 'cancel-booking' %}?course={{ course.pk }}"
+          hx-confirm="{% if course.cancel_refundable %}Wirklich abmelden? Du bekommst 1 Credit zurück.{% else %}Wirklich abmelden? Die 24-Stunden-Frist ist vorbei: Du bekommst keinen Credit zurück. Dein Platz wird für andere frei.{% endif %}"
+          hx-include="#active-filter"
           hx-target="#courses-list"
           hx-swap="innerHTML"
         >
@@ -74,6 +76,7 @@
             type="button"
             class="w-full min-h-[44px] rounded-xl px-4 text-base font-semibold bg-[#00df9a] text-[#00261a] transition-colors hover:bg-[#3ff0b6] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             hx-get="{% url 'create-booking' %}?course={{ course.pk }}"
+          hx-include="#active-filter"
             hx-target="#courses-list"
             hx-swap="innerHTML"
           >
@@ -84,6 +87,7 @@
             type="button"
             class="w-full min-h-[44px] rounded-xl px-4 text-sm font-medium text-white/80 ring-1 ring-white/20 transition-colors hover:text-white hover:ring-white/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
             hx-get="{% url 'waitlist-leave' %}?course={{ course.pk }}"
+          hx-include="#active-filter"
             hx-target="#courses-list"
             hx-swap="innerHTML"
           >
@@ -94,6 +98,7 @@
             type="button"
             class="w-full min-h-[44px] rounded-xl px-4 text-base font-semibold text-[#e46aeb] ring-1 ring-[#e46aeb] transition-colors hover:bg-[#e46aeb]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
             hx-get="{% url 'waitlist-join' %}?course={{ course.pk }}"
+          hx-include="#active-filter"
             hx-target="#courses-list"
             hx-swap="innerHTML"
           >

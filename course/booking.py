@@ -3,12 +3,28 @@
 gegen den Wettlauf um den letzten Platz nutzen.
 """
 import enum
+from datetime import datetime, timedelta
 
 from django.db import transaction
 from django.utils import timezone
 
 from users.models import Credits
+from .cancellation import SWISS_TZ
 from .models import Booking, Courses, WaitlistEntry
+
+# Abmeldung mit Credit-Rueckgabe nur bis so lange vor Kursbeginn
+REFUND_DEADLINE = timedelta(hours=24)
+
+
+def course_start(course):
+    """Kursbeginn als aware datetime. Datum/Zeit im Admin sind Schweizer
+    Ortszeit; die App selbst laeuft in UTC."""
+    return datetime.combine(course.date, course.start).replace(tzinfo=SWISS_TZ)
+
+
+def cancellation_refundable(course, now=None):
+    """True, wenn bei einer Abmeldung jetzt der Credit zurueckkommt."""
+    return course_start(course) - (now or timezone.now()) > REFUND_DEADLINE
 
 
 class BookingResult(enum.Enum):
