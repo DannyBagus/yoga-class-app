@@ -9,4 +9,7 @@ urlpatterns = [
     path('show-attendees/', show_attendees, name="show-attendees"),
     path('teilnehmer-abfrage/', send_course_reminder, name='send_course_reminder'),
     path('absage/<str:token>/', confirm_cancellation_receipt, name='confirm-cancellation-receipt'),
+    path('warteliste/eintragen/', join_waitlist, name='waitlist-join'),
+    path('warteliste/austragen/', leave_waitlist, name='waitlist-leave'),
+    path('warteliste/<str:token>/', claim_waitlist_seat, name='waitlist-claim'),
     ]

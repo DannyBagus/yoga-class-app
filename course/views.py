@@ -1,10 +1,14 @@
 from typing import Any
-from django.http import HttpResponse
+from django.db.models import Count, Q
+from django.http import Http404, HttpResponse
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
-from course.models import Courses, Booking
+from course import waitlist
+from course.booking import BookingResult, book
+from course.models import Courses, Booking, WaitlistEntry
 from course.cancellation import confirm_receipt, notice_from_token
+from course.waitlist import ClaimResult, WaitlistError
 from users.models import Credits
 from django.contrib.auth.models import User
 from django.views.generic import ListView
@@ -13,177 +17,174 @@ from django.contrib import messages
 from django.utils import timezone
 from datetime import datetime, timedelta
 
+def _decorate(courses, user):
+    """Kurse fuer die Karten aufbereiten: Datum/Zeit formatiert, Anzahl Wartende
+    (ohne Namen), Buchungen und Wartelisten-Eintraege der eingeloggten Kundin."""
+    courses = courses.select_related('category').annotate(
+        waitlist_count=Count('waitlist_entries',
+                             filter=Q(waitlist_entries__status=WaitlistEntry.WAITING),
+                             distinct=True),
+    ).order_by('date', 'start')  # Meta.ordering gilt bei GROUP BY (annotate) nicht
+    for course in courses:
+        course.formatted_date = course.date.strftime('%d.%m.%Y')  # Format date as day.month.year
+        course.formatted_time = course.start.strftime('%H:%M')    # Format time as hour:minute
+    if user.is_authenticated:
+        booked = set(Booking.objects.filter(user=user).values_list('course_id', flat=True))
+        waitlisted = set(WaitlistEntry.objects.filter(user=user, status=WaitlistEntry.WAITING)
+                         .values_list('course_id', flat=True))
+    else:
+        booked, waitlisted = set(), set()
+    return {'courses': courses, 'booked_courses': booked, 'waitlisted_courses': waitlisted}
+
+
+def _render_course_list(request, courses=None):
+    if courses is None:
+        courses = Courses.upcoming_courses.upcoming()
+    return render(request, 'partials/course_list.html', _decorate(courses, request.user))
+
+
+def _course_from_request(request):
+    course_id = request.GET.get('course')
+    return Courses.objects.filter(pk=course_id).first() if course_id else None
+
+
 class CourseListView(ListView):
     model = Courses
     template_name = 'course/courses.html'
     context_object_name = 'courses'
-    
+
     def get_queryset(self):
         # Use the custom manager to get upcoming courses
         return Courses.upcoming_courses.upcoming()  # Get courses with date >= today
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        courses = context['courses']
-        
-        # Format the date and time for each course
-        for course in courses:
-            course.formatted_date = course.date.strftime('%d.%m.%Y')  # Format date as day.month.year
-            course.formatted_time = course.start.strftime('%H:%M')    # Format time as hour:minute
-            
-        # Get the list of course IDs where the user has a booking
-        if self.request.user.is_authenticated:
-            booked_courses = Booking.objects.filter(user=self.request.user).values_list('course_id', flat=True)
-            context['booked_courses'] = booked_courses
-        else:
-            context['booked_courses'] = []  # Empty list if user is not logged in
-        
+        context.update(_decorate(self.get_queryset(), self.request.user))
         return context
-    
+
 
 def filter_courses(request):
     filter_type = request.GET.get('filter', 'all')
-    
+    courses = Courses.upcoming_courses.upcoming()
     if filter_type == 'yoga':
-        courses = Courses.upcoming_courses.upcoming().filter(category__name='Yoga')
+        courses = courses.filter(category__name='Yoga')
     elif filter_type == 'pilates':
-        courses = Courses.upcoming_courses.upcoming().filter(category__name='Pilates')
+        courses = courses.filter(category__name='Pilates')
     elif filter_type == 'mamifit':
-        courses = Courses.upcoming_courses.upcoming().filter(category__name='MamiFit')
-    elif filter_type == 'my_courses':
-        courses = Courses.upcoming_courses.upcoming().filter(bookings__user=request.user)
-    else:
-        courses = Courses.upcoming_courses.upcoming()
-        
-    # Format date and time for each course
-    formatted_courses = []
-    for course in courses:
-        course.formatted_date = course.date.strftime('%d.%m.%Y')  # Format date as day.month.year
-        course.formatted_time = course.start.strftime('%H:%M')    # Format time as hour:minute
-        formatted_courses.append(course)
-        
-    # Get course IDs where the user has a booking        
-    try:     
-        booked_courses = Booking.objects.filter(user=request.user).values_list('course_id', flat=True)
-    
-    except:
-        booked_courses = ''
-                       
-    context = {
-        'courses': courses,
-        'booked_courses': booked_courses
-    }
-        
-    return render(request, 'partials/course_list.html', context)
+        courses = courses.filter(category__name='MamiFit')
+    elif filter_type == 'my_courses' and request.user.is_authenticated:
+        courses = courses.filter(bookings__user=request.user)
+    return _render_course_list(request, courses)
+
+
+_BOOKING_ERRORS = {
+    BookingResult.CANCELLED: "Dieser Kurs wurde abgesagt und kann nicht gebucht werden.",
+    BookingResult.FULL: "Der Kurs ist bereits ausgebucht. Trag Dich doch auf die Warteliste ein.",
+    BookingResult.NO_CREDITS: "Du hast nicht genügend Credits.",
+    BookingResult.ALREADY_BOOKED: "Du bist für diesen Kurs bereits angemeldet.",
+}
 
 
 def create_booking(request):
-    course_id = request.GET.get('course')
-    if course_id:
-        course = Courses.objects.filter(pk=course_id).first()
-        if course:
-            if request.user.is_authenticated:
-                if course.is_cancelled:
-                    messages.error(request, "Dieser Kurs wurde abgesagt und kann nicht gebucht werden.")
-                elif course.capacity == 0:
-                    # Course is fully booked, show error message
-                    messages.error(request, "Der Kurs ist bereits ausgebucht.")
-                else:
-                    try:
-                        # Get user's credits
-                        user_credits = Credits.objects.get(user=request.user)
-                        
-                        if user_credits.number > 0:
-                            # Reduce credits by 1
-                            user_credits.number -= 1
-                            user_credits.save()
-
-                            # Create the booking
-                            Booking.objects.get_or_create(user=request.user, course=course)
-                            
-                            # Reduce course capacity
-                            course.capacity = max(course.capacity - 1, 0)
-                            course.save()
-                            messages.success(request, f"Buchung erfolgreich. Du hast {user_credits.number} Credit(s) übrig.")
-                        else:
-                            # Handle no credits
-                            messages.error(request, "Du hast nicht genügend Credits.")
-                    
-                    except Credits.DoesNotExist:
-                        messages.error(request, "Du hast noch keine Credits gekauft.")
-    
-    courses = Courses.upcoming_courses.upcoming()
-    
-    # Format the date and time for each course
-    for course in courses:
-        course.formatted_date = course.date.strftime('%d.%m.%Y')  # Format date as day.month.year
-        course.formatted_time = course.start.strftime('%H:%M')    # Format time as hour:minute
-    
-    # Get course IDs where the user has a booking
-    booked_courses = Booking.objects.filter(user=request.user).values_list('course_id', flat=True)
-                       
-    context = {
-        'courses': courses,
-        'booked_courses': booked_courses
-    }
-        
-    return render(request, 'partials/course_list.html', context)
-
+    course = _course_from_request(request)
+    if course and request.user.is_authenticated:
+        result, credits_left = book(request.user, course.pk)
+        if result is BookingResult.BOOKED:
+            messages.success(request, f"Buchung erfolgreich. Du hast {credits_left} Credit(s) übrig.")
+        else:
+            messages.error(request, _BOOKING_ERRORS[result])
+    return _render_course_list(request)
 
 
 def cancel_booking(request):
-    if request.method == 'GET':
-        course_id = request.GET.get('course')
-        course = get_object_or_404(Courses, pk=course_id)
-        
-        # Check if the user has an existing booking for the course
-        booking = Booking.objects.filter(user=request.user, course=course).first()
+    course = _course_from_request(request)
+    if course is None:
+        raise Http404
+    booking = Booking.objects.filter(user=request.user, course=course).first() \
+        if request.user.is_authenticated else None
 
-        if booking:
-            # Course start time
-            course_start_time = timezone.make_aware(datetime.combine(course.date, course.start))
+    if booking:
+        # Course start time
+        course_start_time = timezone.make_aware(datetime.combine(course.date, course.start))
+        credits, _ = Credits.objects.get_or_create(user=request.user, defaults={'number': 0})
 
-            # Check if the course starts in more than 24 hours
-            if course_start_time - timezone.now() > timezone.timedelta(hours=24):
-                # Add credit back to user's balance
-                credits, created = Credits.objects.get_or_create(user=request.user)
-                credits.number += 1  # Assuming each booking gives 1 credit
-                credits.save()
-
-                # Optionally delete the booking
-                booking.delete()
-                messages.success(request, f"Du wurdest erfolgreich abgemeldet. Du hast {credits.number} Credit(s) übrig.")
-                
-            else:
-                # Optionally delete the booking without adding credit
-                booking.delete()
-                messages.success(request, "Du wurdest erfolgreich abgemeldet. Die Abmeldefrist wurde nicht eingehalten. Du hast {credits.number} Credit(s) übrig.")
-                            
-            # Increase course capacity
-            course.capacity = min(course.capacity + 1, 7)
-            course.save()
-            
+        # Check if the course starts in more than 24 hours
+        if course_start_time - timezone.now() > timezone.timedelta(hours=24):
+            # Add credit back to user's balance
+            credits.number += 1  # Assuming each booking gives 1 credit
+            credits.save()
+            booking.delete()
+            messages.success(request, f"Du wurdest erfolgreich abgemeldet. Du hast {credits.number} Credit(s) übrig.")
         else:
-            # Handle case where no booking exists
-            messages.error(request, "Es wurde keine Buchung gefunden.")
+            # Delete the booking without adding credit
+            booking.delete()
+            messages.success(request, "Du wurdest erfolgreich abgemeldet. Die Abmeldefrist wurde nicht "
+                                      f"eingehalten. Du hast {credits.number} Credit(s) übrig.")
 
-        # Render the updated courses list after booking cancellation
-        courses = Courses.upcoming_courses.upcoming()
-        
-        # Format the date and time for each course
-        for course in courses:
-            course.formatted_date = course.date.strftime('%d.%m.%Y')  # Format date as day.month.year
-            course.formatted_time = course.start.strftime('%H:%M')    # Format time as hour:minute
-            
-        # Get course IDs where the user has a booking
-        booked_courses = Booking.objects.filter(user=request.user).values_list('course_id', flat=True)
-        
-    context = {
-        'courses': courses,
-        'booked_courses': booked_courses
-    }
-        
-    return render(request, 'partials/course_list.html', context)
+        # Platz wieder freigeben; loest die Warteliste aus (course.waitlist)
+        course.capacity += 1
+        course.save()
+    else:
+        # Handle case where no booking exists
+        messages.error(request, "Es wurde keine Buchung gefunden.")
+
+    return _render_course_list(request)
+
+
+def join_waitlist(request):
+    course = _course_from_request(request)
+    if course and request.user.is_authenticated:
+        try:
+            waitlist.join(request.user, course)
+            messages.success(request, "Du bist auf der Warteliste. Sobald ein Platz frei wird, "
+                                      "bekommst Du eine E-Mail.")
+        except WaitlistError as e:
+            messages.error(request, str(e))
+    return _render_course_list(request)
+
+
+def leave_waitlist(request):
+    course = _course_from_request(request)
+    if course and request.user.is_authenticated:
+        if waitlist.leave(request.user, course):
+            messages.success(request, "Du wurdest von der Warteliste ausgetragen.")
+        else:
+            messages.error(request, "Du stehst nicht auf der Warteliste dieses Kurses.")
+    return _render_course_list(request)
+
+
+def claim_waitlist_seat(request, token):
+    """Landeseite des Buttons "Jetzt einschreiben" in der Platz-frei-Mail.
+
+    GET zeigt nur die Seite; gebucht wird erst per POST (Button), weil
+    Mail-Scanner Links in E-Mails automatisch aufrufen. Kein Login noetig:
+    der signierte Link ist persoenlich.
+    """
+    entry = waitlist.entry_from_token(token)
+    if entry is None:
+        return render(request, 'course/waitlist_claim.html', {'invalid': True}, status=404)
+
+    course = entry.course
+    if request.method == 'POST':
+        result = waitlist.claim(entry)
+    elif Booking.objects.filter(user=entry.user, course=course).exists():
+        result = ClaimResult.ALREADY_BOOKED
+    elif course.is_cancelled:
+        result = ClaimResult.COURSE_CANCELLED
+    elif waitlist.has_started(course):
+        result = ClaimResult.COURSE_STARTED
+    else:
+        result = None  # Button anzeigen
+
+    credits = Credits.objects.filter(user=entry.user).values_list('number', flat=True).first() or 0
+    return render(request, 'course/waitlist_claim.html', {
+        'entry': entry,
+        'course': course,
+        'course_date': course.date.strftime('%d.%m.%Y'),
+        'course_time': course.start.strftime('%H:%M'),
+        'result': result.value if result else None,
+        'credits': credits,
+    })
 
 def show_attendees(request):
     course_id = request.GET.get('course_id')

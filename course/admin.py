@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
@@ -8,7 +8,7 @@ from django.utils.html import format_html
 
 from users.models import Credits
 from .cancellation import SUMMARY_RECIPIENTS, SWISS_TZ, CourseAlreadyCancelled, cancel_course
-from .models import CancellationNotice, Courses, Category, Booking
+from .models import CancellationNotice, Courses, Category, Booking, WaitlistEntry
 
 
 # --- Helfer -----------------------------------------------------------------
@@ -124,11 +124,36 @@ class CancellationNoticeInline(admin.TabularInline):
     confirmation.short_description = "Erhalt bestätigt"
 
 
+class WaitlistEntryInline(admin.TabularInline):
+    ''' Warteliste des Kurses (nur lesen; Eintraege bleiben zur Nachvollziehbarkeit) '''
+    model = WaitlistEntry
+    extra = 0
+    can_delete = False
+    verbose_name_plural = "Warteliste"
+    fields = ['customer_link', 'customer_phone', 'status', 'created_at',
+              'notified_count', 'last_notified_at', 'booked_at']
+    readonly_fields = fields
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('user', 'user__profile')
+
+    def customer_link(self, obj):
+        return _user_link(obj.user)
+    customer_link.short_description = "Kundin"
+
+    def customer_phone(self, obj):
+        return _user_phone(obj.user)
+    customer_phone.short_description = "Telefon"
+
+
 # --- Kurse ------------------------------------------------------------------
 
 @admin.register(Courses)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'topic', 'date', 'start', 'occupancy', 'is_cancelled')
+    list_display = ('name', 'category', 'topic', 'date', 'start', 'occupancy', 'waitlist', 'is_cancelled')
     list_filter = (CourseUpcomingFilter, 'is_cancelled', 'category', 'topic', 'date')
     readonly_fields = ('cancelled_at',)
     search_fields = (
@@ -139,22 +164,44 @@ class CourseAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
     ordering = ['-date']
     list_select_related = ('category',)
-    inlines = [BookingInline]
+    inlines = [BookingInline, WaitlistEntryInline]
 
     def get_inlines(self, request, obj):
         # Abgesagte Kurse: zusaetzlich wer benachrichtigt wurde und wer bestaetigt hat
         if obj is not None and obj.is_cancelled:
-            return [CancellationNoticeInline, BookingInline]
-        return [BookingInline]
+            return [CancellationNoticeInline, BookingInline, WaitlistEntryInline]
+        return [BookingInline, WaitlistEntryInline]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(_booking_count=Count('bookings'))
+        # distinct: zwei Count-Joins wuerden sich sonst gegenseitig multiplizieren
+        return super().get_queryset(request).annotate(
+            _booking_count=Count('bookings', distinct=True),
+            _waitlist_count=Count('waitlist_entries', distinct=True,
+                                  filter=Q(waitlist_entries__status=WaitlistEntry.WAITING)),
+        )
+
+    def save_formset(self, request, form, formset, change):
+        super().save_formset(request, form, formset, change)
+        if formset.model is not Booking:
+            return
+        # Buchungen in der Inline: freie Plaetze nachfuehren wie bei allen anderen
+        # Buchungswegen. Steigen sie, loest das die Warteliste aus.
+        delta = len(formset.deleted_objects) - len(formset.new_objects)
+        if delta:
+            course = Courses.objects.get(pk=form.instance.pk)
+            course.capacity = max(course.capacity + delta, 0)
+            course.save(update_fields=['capacity'])
 
     def occupancy(self, obj):
         # capacity = freie Plätze (Live-Zähler), _booking_count = gebuchte Plätze
         return format_html("<b>{}</b> gebucht · {} frei", obj._booking_count, obj.capacity)
     occupancy.short_description = "Belegung"
     occupancy.admin_order_field = '_booking_count'
+
+    def waitlist(self, obj):
+        return f"{obj._waitlist_count} wartend" if obj._waitlist_count else "—"
+    waitlist.short_description = "Warteliste"
+    waitlist.admin_order_field = '_waitlist_count'
 
     # --- Kurs absagen (roter Button auf der Detailseite) ---
 

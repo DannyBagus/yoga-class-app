@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Platz frei</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+            <!-- Header -->
+            <tr>
+              <td style="background-color: #00df9a; padding: 28px 32px; text-align: center;">
+                <h1 style="margin: 0; font-size: 22px; line-height: 1.3; color: #0b3d2e;">Mileja Yoga &amp; Pilates</h1>
+              </td>
+            </tr>
+            <!-- Body -->
+            <tr>
+              <td style="padding: 32px;">
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;"><strong>Ein Platz ist frei geworden!</strong></p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 24px; background-color: #f9fafb; border-left: 4px solid #e46aeb; border-radius: 8px;">
+                  <tr>
+                    <td style="padding: 16px 20px; font-size: 16px; line-height: 1.5;">
+                      <strong>{{ course.category.name }} - {{ course.name }}</strong><br />
+                      {{ course_date }}, {{ course_time }} Uhr
+                    </td>
+                  </tr>
+                </table>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 16px;">
+                  <tr>
+                    <td align="center" style="border-radius: 8px; background-color: #00df9a;">
+                      <a href="{{ claim_url }}" target="_blank" style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: bold; color: #0b3d2e; text-decoration: none; border-radius: 8px;">
+                        Jetzt einschreiben
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin: 0 0 8px; font-size: 13px; line-height: 1.5; color: #6b7280;">Es gilt <strong>first come, first serve</strong>: Wer zuerst klickt, bekommt den Platz.</p>
+                <hr style="border: none; border-top: 1px solid #eef0f2; margin: 24px 0;" />
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;"><strong>A spot has opened up!</strong> ({{ course_date }}, {{ course_time }})</p>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 16px;">
+                  <tr>
+                    <td align="center" style="border-radius: 8px; background-color: #00df9a;">
+                      <a href="{{ claim_url }}" target="_blank" style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: bold; color: #0b3d2e; text-decoration: none; border-radius: 8px;">
+                        Book now
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin: 0 0 8px; font-size: 13px; line-height: 1.5; color: #6b7280;"><strong>First come, first serve</strong>: the first person to click gets the spot.</p>
+                <hr style="border: none; border-top: 1px solid #eef0f2; margin: 24px 0;" />
+                <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #9ca3af;">Du erhältst diese Mail, weil Du auf der Warteliste stehst. <a href="{{ courses_url }}" style="color: #9ca3af;">Austragen in der Kursübersicht</a> · You are receiving this because you are on the waiting list.</p>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td style="padding: 20px 32px; background-color: #f9fafb; border-top: 1px solid #eef0f2; text-align: center;">
+                <p style="margin: 0; font-size: 12px; color: #9ca3af;">Mileja Yoga &amp; Pilates &middot; kurse.mileja.ch</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

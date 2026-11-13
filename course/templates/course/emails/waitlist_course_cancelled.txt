@@ -1,0 +1,18 @@
+Der folgende Kurs wurde leider abgesagt:
+
+{{ course.category.name }} - {{ course.name }}
+{{ course_date }}, {{ course_time }} Uhr
+
+Du stehst damit nicht mehr auf der Warteliste. Weitere Kurse findest Du hier:
+{{ courses_url }}
+
+---
+
+Unfortunately, we have to cancel the following course:
+
+{{ course.category.name }} - {{ course.name }}
+{{ course_date }}, {{ course_time }}
+
+You are therefore no longer on the waiting list. More courses: {{ courses_url }}
+
+Mileja Yoga & Pilates · kurse.mileja.ch

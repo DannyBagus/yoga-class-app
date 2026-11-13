@@ -1,87 +1,115 @@
-{% load static %} {% if courses %}
-<div>
-  <div class="w-full py-4 px-4">
-    <div class="max-w-[1240px] mx-auto grid md:grid-cols-4 md:gap-4 py-8 px-8">
-      {% if courses%} {% for course in courses %}
-      <div
-        class="flex flex-col pt-8 my-4 justify-center px-4 bg-black border rounded-lg transition-colors duration-200 {% if course.is_cancelled %}border-gray-600 grayscale opacity-50 cursor-not-allowed{% else %}border-[#00df9a]/40 hover:border-[#00df9a]{% endif %}"
-      >
-        {% if course.category.id == 1 %}<img
-          src="{% static 'core/images/ss_yoga.jpg' %}"
-          alt="Yoga"
-          class="mb-4"
-        />
-        {% elif course.category.id == 2 %}<img
-          src="{% static 'core/images/pilates_ss.jpg' %}"
-          alt="Pilates"
-          class="mb-4"
-        />
-        {% elif course.category.id == 3 %}<img
-          src="{% static 'core/images/rektusdiastase.jpg' %}"
-          alt="Pilates"
-          class="mb-4"
-        />
+{% load static %}
+{% if courses %}
+<ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 py-6 md:py-8">
+  {% for course in courses %}
+  <li
+    class="flex flex-col rounded-2xl bg-white/[0.04] ring-1 overflow-hidden {% if course.is_cancelled %}ring-white/10 grayscale opacity-60{% elif course.pk in booked_courses %}ring-[#00df9a]/50{% else %}ring-white/10{% endif %}"
+  >
+    <div class="flex md:flex-col gap-4 md:gap-0 p-4 md:p-0">
+      {% if course.category.id == 1 %}
+      <img src="{% static 'core/images/ss_yoga.jpg' %}" alt="" class="w-24 h-24 md:w-full md:h-40 shrink-0 rounded-xl md:rounded-none object-cover" />
+      {% elif course.category.id == 2 %}
+      <img src="{% static 'core/images/pilates_ss.jpg' %}" alt="" class="w-24 h-24 md:w-full md:h-40 shrink-0 rounded-xl md:rounded-none object-cover" />
+      {% elif course.category.id == 3 %}
+      <img src="{% static 'core/images/rektusdiastase.jpg' %}" alt="" class="w-24 h-24 md:w-full md:h-40 shrink-0 rounded-xl md:rounded-none object-cover" />
+      {% endif %}
+
+      <div class="min-w-0 md:px-5 md:pt-4">
+        <p class="text-sm font-medium text-[#e46aeb]">{{ course.category.name }}</p>
+        <h2
+          class="text-2xl leading-tight font-semibold text-white"
+          style="font-family: 'Cormorant Garamond', serif"
+        >
+          {{ course.name }}
+        </h2>
+        <p class="mt-1 text-sm text-white/80">
+          {{ course.date|date:"l, j. F" }}<span class="hidden md:inline">,</span>
+          <span class="block md:inline">{{ course.formatted_time }} Uhr</span>
+        </p>
+      </div>
+    </div>
+
+    {# Status: reine Info, kein Button #}
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 md:px-5 md:pt-3 last:pb-4 md:last:pb-5 text-sm">
+      {% if course.is_cancelled %}
+      <span class="font-medium text-white/80">Abgesagt</span>
+      {% else %}
+        {% if course.pk in booked_courses %}
+        <span class="inline-flex items-center gap-1.5 font-medium text-[#00df9a]">
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L8 12.6l7.3-7.3a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>
+          Du bist angemeldet
+        </span>
+        {% elif course.pk in waitlisted_courses %}
+        <span class="inline-flex items-center gap-1.5 font-medium text-[#e46aeb]">Auf der Warteliste ✓</span>
         {% endif %}
-        <p class="text-[#00df9a] md:text-xl mx-auto">
-          {{ course.category.name }}
-        </p>
-        <p class="mx-auto text-sm md:text-md">{{ course.name }}</p>
-        <p class="mx-auto pb-8 text-sm md:text-md">
-          {{ course.formatted_date }} @ {{ course.formatted_time }}
-        </p>
-        <div class="flex items-center justify-center gap-4 pb-8">
-          {% if course.is_cancelled %}
-          <div
-            class="bg-gray-600 text-white p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center flex-auto"
-          >
-            Abgesagt
-          </div>
-          {% else %}
-          {% if course.capacity == 0 %}
-          <div
-            class="bg-slate-400 text-white p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto line-through"
-          >
-            Ausgebucht
-          </div>
-          {% elif course.capacity <= 3 %}
-          <div
-            class="bg-amber-500 text-black p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto"
-          >
-            Nur noch {{ course.capacity }}!
-          </div>
-          {% else %}
-          <div
-            class="bg-[#00df9a] text-black p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto"
-          >
-            {{ course.capacity }} Plätze
-          </div>
-          {% endif %} {% if course.pk in booked_courses %}
+        {% if course.capacity == 0 %}
+        <span class="text-white/70">Ausgebucht</span>
+        {% elif course.capacity <= 3 %}
+        <span class="font-medium text-amber-300">Nur noch {{ course.capacity }} {% if course.capacity == 1 %}Platz{% else %}Plätze{% endif %}!</span>
+        {% else %}
+        <span class="text-white/70">{{ course.capacity }} Plätze frei</span>
+        {% endif %}
+        {% if course.waitlist_count %}
+        <span class="text-white/60">{{ course.waitlist_count }} auf der Warteliste</span>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    {# Genau eine Aktion pro Karte. Nur "Buchen" ist gefuellt (primary). #}
+    {% if not course.is_cancelled %}{% if user.is_authenticated or course.pk in booked_courses %}
+    <div class="mt-auto p-4 md:p-5">
+        {% if course.pk in booked_courses %}
+        <button
+          type="button"
+          class="w-full min-h-[44px] rounded-xl px-4 text-sm font-medium text-white/80 ring-1 ring-white/20 transition-colors hover:text-red-300 hover:ring-red-300/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          hx-get="{% url 'cancel-booking' %}?course={{ course.pk }}"
+          hx-target="#courses-list"
+          hx-swap="innerHTML"
+        >
+          Abmelden
+        </button>
+        {% elif user.is_authenticated %}
+          {% if course.capacity > 0 %}
           <button
-            class="bg-[#f24444] p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
-            hx-get="{% url 'cancel-booking' %}?course={{ course.pk }}"
-            hx-target="#courses-list"
-            hx-swap="innerHTML"
-          >
-            Abmelden
-          </button>
-          {% else %} {% if user.is_authenticated %}
-          <button
-            class="bg-[#00df9a] p-2 md:p-4 rounded-xl font-bold text-sm md:text-md text-center max-w-30 flex-auto transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-105"
+            type="button"
+            class="w-full min-h-[44px] rounded-xl px-4 text-base font-semibold bg-[#00df9a] text-[#00261a] transition-colors hover:bg-[#3ff0b6] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             hx-get="{% url 'create-booking' %}?course={{ course.pk }}"
             hx-target="#courses-list"
             hx-swap="innerHTML"
           >
             Buchen
           </button>
-          {% else %} {% endif %} {% endif %}
+          {% elif course.pk in waitlisted_courses %}
+          <button
+            type="button"
+            class="w-full min-h-[44px] rounded-xl px-4 text-sm font-medium text-white/80 ring-1 ring-white/20 transition-colors hover:text-white hover:ring-white/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            hx-get="{% url 'waitlist-leave' %}?course={{ course.pk }}"
+            hx-target="#courses-list"
+            hx-swap="innerHTML"
+          >
+            Von der Warteliste austragen
+          </button>
+          {% else %}
+          <button
+            type="button"
+            class="w-full min-h-[44px] rounded-xl px-4 text-base font-semibold text-[#e46aeb] ring-1 ring-[#e46aeb] transition-colors hover:bg-[#e46aeb]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            hx-get="{% url 'waitlist-join' %}?course={{ course.pk }}"
+            hx-target="#courses-list"
+            hx-swap="innerHTML"
+          >
+            Auf die Warteliste
+          </button>
           {% endif %}
-        </div>
-      </div>
-      {% endfor %} {% else %}
-      <p class="text-lg md:text-2xl">Keine Kurse gefunden.</p>
-      {% endif %}
+        {% endif %}
     </div>
-  </div>
+    {% endif %}{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="py-12 text-white/80">
+  <p class="text-lg">Keine Kurse gefunden.</p>
+  <p class="mt-1 text-sm text-white/60">Probier einen anderen Filter oder schau später wieder vorbei.</p>
 </div>
 {% endif %}
 

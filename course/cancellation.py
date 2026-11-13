@@ -36,6 +36,8 @@ class CancellationResult:
     summary_sent: bool = False
     # user_pk -> CancellationNotice
     notices: dict = field(default_factory=dict)
+    # Info-Mails an die Warteliste
+    waitlist_notified: int = 0
 
 
 SUMMARY_RECIPIENTS = ['hebammen@mileja.ch']
@@ -78,6 +80,10 @@ def cancel_course(course_id, cancelled_by=None):
                 credits_before=before, credits_after=credits.number)
             booking.delete()
 
+        # Warteliste schliessen (lokaler Import: waitlist importiert dieses Modul)
+        from .waitlist import close_waitlist, notify_course_cancelled
+        waitlist_entries = close_waitlist(course)
+
         course.capacity += len(bookings)  # Plaetze wieder freigeben (Live-Zaehler)
         course.is_cancelled = True
         course.cancelled_at = timezone.now()
@@ -96,6 +102,8 @@ def cancel_course(course_id, cancelled_by=None):
         except Exception:
             logger.exception('Absage-Mail an %s fehlgeschlagen (Kurs %s)', user.email, course.pk)
             result.mail_failures.append(user)
+
+    result.waitlist_notified = notify_course_cancelled(course, waitlist_entries)
 
     try:
         _send_summary_mail(course, result, cancelled_by)

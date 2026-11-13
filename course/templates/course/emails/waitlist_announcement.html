@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Neu: Warteliste</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+            <!-- Header -->
+            <tr>
+              <td style="background-color: #00df9a; padding: 28px 32px; text-align: center;">
+                <h1 style="margin: 0; font-size: 22px; line-height: 1.3; color: #0b3d2e;">Mileja Yoga &amp; Pilates</h1>
+              </td>
+            </tr>
+            <!-- Body -->
+            <tr>
+              <td style="padding: 32px;">
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;">Hallo{% if first_name %} {{ first_name }}{% endif %}</p>
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;">Unsere MamiFit-Kurse sind oft schnell ausgebucht. Deshalb gibt es ab sofort eine <strong>Warteliste</strong>.</p>
+                <p style="margin: 0 0 8px; font-size: 16px; line-height: 1.5;"><strong>So funktioniert's</strong></p>
+                <ol style="margin: 0 0 16px; padding-left: 22px;">
+                  <li style="margin: 0 0 8px; font-size: 16px; line-height: 1.5;">Ist ein Kurs ausgebucht, klickst Du in der Kursübersicht auf <strong>«Auf die Warteliste»</strong>. Dafür brauchst Du mindestens 1 Credit.</li>
+                  <li style="margin: 0 0 8px; font-size: 16px; line-height: 1.5;">Wird ein Platz frei, bekommst Du sofort eine E-Mail.</li>
+                  <li style="margin: 0 0 8px; font-size: 16px; line-height: 1.5;">Ein Klick auf <strong>«Jetzt einschreiben»</strong> sichert Dir den Platz. Es gilt <strong>first come, first serve</strong>: Wer zuerst klickt, bekommt den Platz. Erst dann wird 1 Credit abgebucht.</li>
+                </ol>
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;">War jemand schneller, bleibst Du auf der Warteliste und bekommst beim nächsten freien Platz wieder eine Mail. Austragen kannst Du Dich jederzeit in der Kursübersicht.</p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 24px; background-color: #fdf2fd; border-left: 4px solid #e46aeb; border-radius: 8px;">
+                  <tr><td style="padding: 16px 20px; font-size: 15px; line-height: 1.5;"><strong>Kannst Du nicht kommen? Bitte melde Dich ab</strong>, auch wenn die 24 Stunden vor Kursbeginn schon vorbei sind. Den Credit bekommst Du dann zwar nicht zurück, aber eine andere Frau von der Warteliste kann Deinen Platz noch nutzen. Danke!</td></tr>
+                </table>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">
+                  <tr>
+                    <td align="center" style="border-radius: 8px; background-color: #00df9a;">
+                      <a href="{{ courses_url }}" target="_blank" style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: bold; color: #0b3d2e; text-decoration: none; border-radius: 8px;">Zur Kursübersicht</a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;">Liebe Grüsse<br />Dein Mileja-Team</p>
+                <hr style="border: none; border-top: 1px solid #eef0f2; margin: 28px 0;" />
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;">Hi{% if first_name %} {{ first_name }}{% endif %}</p>
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;">Our MamiFit classes often fill up quickly, so we now have a <strong>waiting list</strong>.</p>
+                <p style="margin: 0 0 8px; font-size: 16px; line-height: 1.5;"><strong>How it works</strong></p>
+                <ol style="margin: 0 0 16px; padding-left: 22px;">
+                  <li style="margin: 0 0 8px; font-size: 16px; line-height: 1.5;">If a class is fully booked, click <strong>«Auf die Warteliste»</strong> (join waiting list) in the class overview. You need at least 1 credit.</li>
+                  <li style="margin: 0 0 8px; font-size: 16px; line-height: 1.5;">As soon as a spot opens up, you'll get an email.</li>
+                  <li style="margin: 0 0 8px; font-size: 16px; line-height: 1.5;">Click <strong>«Book now»</strong> to grab the spot. <strong>First come, first serve</strong>: the first person to click gets it. Only then is 1 credit deducted.</li>
+                </ol>
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5;">If someone was faster, you stay on the waiting list and get another email when the next spot opens up. You can leave the waiting list at any time in the class overview.</p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 24px; background-color: #fdf2fd; border-left: 4px solid #e46aeb; border-radius: 8px;">
+                  <tr><td style="padding: 16px 20px; font-size: 15px; line-height: 1.5;"><strong>Can't make it? Please cancel your booking</strong>, even if it's less than 24 hours before the class. You won't get your credit back, but another woman on the waiting list can still take your spot. Thank you!</td></tr>
+                </table>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">
+                  <tr>
+                    <td align="center" style="border-radius: 8px; background-color: #00df9a;">
+                      <a href="{{ courses_url }}" target="_blank" style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: bold; color: #0b3d2e; text-decoration: none; border-radius: 8px;">Go to classes</a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin: 0; font-size: 16px; line-height: 1.5;">Best wishes<br />Your Mileja team</p>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td style="padding: 20px 32px; background-color: #f9fafb; border-top: 1px solid #eef0f2; text-align: center;">
+                <p style="margin: 0; font-size: 12px; color: #9ca3af;">Mileja Yoga &amp; Pilates &middot; kurse.mileja.ch</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

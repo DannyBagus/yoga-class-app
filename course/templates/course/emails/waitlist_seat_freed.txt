@@ -1,0 +1,25 @@
+Ein Platz ist frei geworden!
+
+{{ course.category.name }} - {{ course.name }}
+{{ course_date }}, {{ course_time }} Uhr
+
+Jetzt einschreiben:
+{{ claim_url }}
+
+Es gilt first come, first serve: Wer zuerst klickt, bekommt den Platz.
+
+---
+
+A spot has opened up!
+
+{{ course.category.name }} - {{ course.name }}
+{{ course_date }}, {{ course_time }}
+
+Book now:
+{{ claim_url }}
+
+First come, first serve: the first person to click gets the spot.
+
+---
+Du erhältst diese Mail, weil Du auf der Warteliste stehst. Austragen: {{ courses_url }}
+Mileja Yoga & Pilates · kurse.mileja.ch

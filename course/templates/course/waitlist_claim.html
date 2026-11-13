@@ -1,0 +1,81 @@
+{% extends 'core/base.html' %} {% block content %}
+<div class="text-white pb-32">
+  <div
+    id="header"
+    class="max-w-[800px] mt-[-96px] w-full h-40 md:h-64 mx-auto text-center flex flex-col justify-center"
+  >
+    <p class="text-xl md:text-3xl text-[#00df9a]">Warteliste · Waiting list</p>
+  </div>
+  <div class="bg-white text-black rounded-xl p-6 md:p-8 max-w-[620px] flex flex-col mx-auto text-center">
+    {% if invalid %}
+    <p class="text-lg">
+      Dieser Link ist ungültig oder abgelaufen. Bitte melde Dich direkt bei uns:
+      <a href="mailto:hebammen@mileja.ch" class="underline">hebammen@mileja.ch</a>.
+    </p>
+    <p class="text-sm text-gray-500 mt-4">This link is invalid or has expired.</p>
+    {% else %}
+    <p class="text-xl font-bold">{{ course.category.name }} - {{ course.name }}</p>
+    <p class="text-lg mb-6">{{ course_date }}, {{ course_time }} Uhr</p>
+
+    {% if result == 'success' or result == 'already_booked' %}
+    <div class="waitlist-result-success flex flex-col items-center">
+      <svg class="w-20 h-20 text-green-600 mb-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+      </svg>
+      <p class="text-xl font-bold text-green-700 mb-2">Geschafft! Du hast den Platz.</p>
+      <p>Du bist für den Kurs angemeldet. Du hast {{ credits }} Credit(s) übrig.</p>
+      <p class="text-sm text-gray-500 mt-4">Done! You got the spot and are booked for this course.</p>
+    </div>
+
+    {% elif result == 'too_late' %}
+    <div class="waitlist-result-failure flex flex-col items-center">
+      <svg class="w-20 h-20 text-red-600 mb-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+      </svg>
+      <p class="text-xl font-bold text-red-700 mb-2">Leider war jemand anderes schneller als du.</p>
+      <p>Du verbleibst auf der Warteliste und bekommst wieder eine E-Mail, sobald ein Platz frei wird.</p>
+      <p class="text-sm text-gray-500 mt-4">Sorry, someone else was faster. You stay on the waiting list.</p>
+    </div>
+
+    {% elif result == 'no_credits' %}
+    <div class="waitlist-result-failure flex flex-col items-center">
+      <svg class="w-20 h-20 text-red-600 mb-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+      </svg>
+      <p class="text-xl font-bold text-red-700 mb-2">Du hast keine Credits mehr.</p>
+      <p>Der Platz ist noch frei. Kaufe Credits und buche dann direkt in der Kursübersicht. Du bleibst auf der Warteliste.</p>
+      <a href="{% url 'my-account' %}" class="bg-[#00df9a] text-black font-bold p-4 rounded-xl mt-6">Credits kaufen</a>
+      <p class="text-sm text-gray-500 mt-4">You have no credits left. Buy credits, then book the course directly.</p>
+    </div>
+
+    {% elif result == 'course_cancelled' %}
+    <p class="text-lg">Dieser Kurs wurde leider abgesagt.</p>
+    <p class="text-sm text-gray-500 mt-4">This course has been cancelled.</p>
+
+    {% elif result == 'course_started' %}
+    <p class="text-lg">Dieser Kurs hat bereits begonnen.</p>
+    <p class="text-sm text-gray-500 mt-4">This course has already started.</p>
+
+    {% elif result == 'not_waiting' %}
+    <p class="text-lg">Du stehst nicht mehr auf der Warteliste dieses Kurses. Ist noch ein Platz frei, kannst Du in der Kursübersicht direkt buchen.</p>
+    <p class="text-sm text-gray-500 mt-4">You are no longer on the waiting list for this course.</p>
+
+    {% else %}
+    <p class="mb-1">Ein Platz ist frei geworden. Es gilt first come, first serve.</p>
+    <p class="text-sm text-gray-500 mb-2">A spot has opened up. First come, first serve.</p>
+    <p class="text-sm">Kosten: 1 Credit · Du hast {{ credits }} Credit(s).</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="bg-[#00df9a] text-black p-4 rounded-xl mt-6 font-bold text-lg">
+        Platz jetzt sichern · Book now
+      </button>
+    </form>
+    {% endif %}
+
+    {% if result %}
+    <a href="{% url 'courses' %}" class="underline mt-8">Zur Kursübersicht · All courses</a>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

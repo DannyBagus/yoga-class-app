@@ -116,3 +116,44 @@ class CancellationNotice(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} - {self.course}"
+
+
+class WaitlistEntry(models.Model):
+    ''' Kundin auf der Warteliste eines ausgebuchten Kurses. Eintraege werden nie
+    geloescht, nur ihr Status wechselt (Nachvollziehbarkeit im Admin). '''
+    WAITING = 'waiting'
+    BOOKED = 'booked'
+    LEFT = 'left'
+    COURSE_CANCELLED = 'course_cancelled'
+    STATUS_CHOICES = [
+        (WAITING, 'wartet'),
+        (BOOKED, 'nachgerückt'),
+        (LEFT, 'ausgetragen'),
+        (COURSE_CANCELLED, 'Kurs abgesagt'),
+    ]
+
+    course = models.ForeignKey(
+        Courses,
+        related_name="waitlist_entries",
+        on_delete=models.CASCADE,
+        verbose_name="Kurs"
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Kundin"
+    )
+    status = models.CharField("Status", max_length=20, choices=STATUS_CHOICES, default=WAITING)
+    created_at = models.DateTimeField("Eingetragen am", default=timezone.now)
+    notified_count = models.PositiveIntegerField("Benachrichtigt (Anzahl)", default=0)
+    last_notified_at = models.DateTimeField("Zuletzt benachrichtigt", null=True, blank=True)
+    booked_at = models.DateTimeField("Nachgerückt am", null=True, blank=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        unique_together = [("course", "user")]
+        verbose_name = "Wartelisten-Eintrag"
+        verbose_name_plural = "Warteliste"
+
+    def __str__(self) -> str:
+        return f"{self.user} - {self.course} ({self.get_status_display()})"

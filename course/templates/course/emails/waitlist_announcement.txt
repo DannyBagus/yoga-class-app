@@ -1,0 +1,39 @@
+Hallo{% if first_name %} {{ first_name }}{% endif %}
+
+Unsere MamiFit-Kurse sind oft schnell ausgebucht. Deshalb gibt es ab sofort eine Warteliste.
+
+So funktioniert's:
+1. Ist ein Kurs ausgebucht, klickst Du in der Kursübersicht auf «Auf die Warteliste». Dafür brauchst Du mindestens 1 Credit.
+2. Wird ein Platz frei, bekommst Du sofort eine E-Mail.
+3. Ein Klick auf «Jetzt einschreiben» sichert Dir den Platz. Es gilt first come, first serve: Wer zuerst klickt, bekommt den Platz. Erst dann wird 1 Credit abgebucht.
+
+War jemand schneller, bleibst Du auf der Warteliste und bekommst beim nächsten freien Platz wieder eine Mail. Austragen kannst Du Dich jederzeit in der Kursübersicht.
+
+Kannst Du nicht kommen? Bitte melde Dich ab, auch wenn die 24 Stunden vor Kursbeginn schon vorbei sind. Den Credit bekommst Du dann zwar nicht zurück, aber eine andere Frau von der Warteliste kann Deinen Platz noch nutzen. Danke!
+
+Zur Kursübersicht: {{ courses_url }}
+
+Liebe Grüsse
+Dein Mileja-Team
+
+---
+
+Hi{% if first_name %} {{ first_name }}{% endif %}
+
+Our MamiFit classes often fill up quickly, so we now have a waiting list.
+
+How it works:
+1. If a class is fully booked, click «Auf die Warteliste» (join waiting list) in the class overview. You need at least 1 credit.
+2. As soon as a spot opens up, you'll get an email.
+3. Click «Book now» to grab the spot. First come, first serve: the first person to click gets it. Only then is 1 credit deducted.
+
+If someone was faster, you stay on the waiting list and get another email when the next spot opens up. You can leave the waiting list at any time in the class overview.
+
+Can't make it? Please cancel your booking, even if it's less than 24 hours before the class. You won't get your credit back, but another woman on the waiting list can still take your spot. Thank you!
+
+Go to classes: {{ courses_url }}
+
+Best wishes
+Your Mileja team
+
+Mileja Yoga & Pilates · kurse.mileja.ch
