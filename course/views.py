@@ -55,8 +55,10 @@ def _filtered_courses(request):
     return courses
 
 
-def _render_course_list(request):
-    return render(request, 'partials/course_list.html', _decorate(_filtered_courses(request), request.user))
+def _render_course_list(request, **extra):
+    context = _decorate(_filtered_courses(request), request.user)
+    context.update(extra)
+    return render(request, 'partials/course_list.html', context)
 
 
 def _course_from_request(request):
@@ -93,13 +95,23 @@ _BOOKING_ERRORS = {
 
 def create_booking(request):
     course = _course_from_request(request)
+    conflict = None
     if course and request.user.is_authenticated:
-        result, credits_left = book(request.user, course.pk)
+        release = request.GET.get('release')
+        result, detail = book(request.user, course.pk, release=release)
         if result is BookingResult.BOOKED:
-            messages.success(request, f"Buchung erfolgreich. Du hast {credits_left} Credit(s) übrig.")
+            text = f"Buchung erfolgreich. Du hast {detail} Credit(s) übrig."
+            left = WaitlistEntry.objects.filter(pk=release, user=request.user, status=WaitlistEntry.LEFT) \
+                .select_related('course', 'course__category').first() if release else None
+            if left:
+                text += (f" Du wurdest von der Warteliste {left.course.category.name} - "
+                         f"{left.course.name} entfernt.")
+            messages.success(request, text)
+        elif result is BookingResult.WAITLIST_CONFLICT:
+            conflict = {'course': course, 'entries': detail}
         else:
             messages.error(request, _BOOKING_ERRORS[result])
-    return _render_course_list(request)
+    return _render_course_list(request, booking_conflict=conflict)
 
 
 def cancel_booking(request):

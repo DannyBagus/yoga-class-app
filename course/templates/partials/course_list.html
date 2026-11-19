@@ -124,6 +124,8 @@
   @click.outside="showAttendees = false"
 ></div>
 
+{% if booking_conflict %}{% include 'partials/booking_conflict.html' with conflict=booking_conflict %}{% endif %}
+
 <section id="messages" hx-swap-oob="true" hx-swap="innerHTML">
   {% include 'partials/toast.html' %}
 </section>

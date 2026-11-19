@@ -179,7 +179,9 @@ def my_account(request):
 
         context = {
             "credits": credits.number,
-            "purchase_transactions": purchase_transactions
+            "purchase_transactions": purchase_transactions,
+            # ?buy=1: Kaufbereich direkt aufgeklappt ("Credits kaufen" im Buchungsdialog)
+            "open_purchase": request.GET.get('buy') == '1',
         }
         return render(request, 'partials/my_credits.html', context)
     
@@ -202,7 +204,10 @@ def my_account(request):
         return render(request, 'partials/gtc.html')
     
     phone = Profile.objects.filter(user=request.user).values_list('phone', flat=True).first() if request.user.is_authenticated else ''
-    return render(request, 'users/my_account.html', {'phone': phone})
+    # ?tab=credits (z. B. "Credits kaufen" im Buchungsdialog) oeffnet den Tab direkt
+    tab = request.GET.get('tab', '')
+    tab = tab if tab in ('credits', 'bookings', 'gtc') else ''
+    return render(request, 'users/my_account.html', {'phone': phone, 'tab': tab})
     
 
 def news_item(request):

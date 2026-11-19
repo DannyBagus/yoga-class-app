@@ -22,6 +22,15 @@ def course_start(course):
     return datetime.combine(course.date, course.start).replace(tzinfo=SWISS_TZ)
 
 
+def active_waitlists(user):
+    """Wartende Eintraege der Kundin fuer kommende, nicht abgesagte Kurse.
+    Pro Eintrag ist 1 Credit reserviert. (Eintraege vergangener Kurse bleiben
+    'waiting' stehen und zaehlen nicht.)"""
+    return WaitlistEntry.objects.filter(
+        user=user, status=WaitlistEntry.WAITING, course__is_cancelled=False,
+        course__date__gte=timezone.localdate(timezone=SWISS_TZ))
+
+
 def cancellation_refundable(course, now=None):
     """True, wenn bei einer Abmeldung jetzt der Credit zurueckkommt."""
     return course_start(course) - (now or timezone.now()) > REFUND_DEADLINE
@@ -33,6 +42,8 @@ class BookingResult(enum.Enum):
     CANCELLED = 'cancelled'
     FULL = 'full'
     NO_CREDITS = 'no_credits'
+    # Der einzige freie Credit ist fuer eine Warteliste reserviert
+    WAITLIST_CONFLICT = 'waitlist_conflict'
 
 
 def book_locked(user, course):
@@ -62,8 +73,32 @@ def book_locked(user, course):
     return BookingResult.BOOKED, credits.number
 
 
-def book(user, course_id):
-    """Buchung aus der Kursliste (atomar, Kurs gesperrt)."""
+def book(user, course_id, release=None):
+    """Buchung aus der Kursliste (atomar, Kurs und Credits gesperrt).
+
+    Bleibt nach der Buchung kein Credit fuer die Wartelisten der Kundin uebrig,
+    wird nicht gebucht: Rueckgabe (WAITLIST_CONFLICT, [blockierende Eintraege]).
+    ``release`` = Wartelisten-Eintrag, den die Kundin dafuer aufgibt; er wird
+    nur aufgehoben, wenn die Buchung danach tatsaechlich klappt.
+    Sonst wie ``book_locked``: (BookingResult, verbleibende Credits oder None).
+    """
     with transaction.atomic():
         course = Courses.objects.select_for_update().get(pk=course_id)
-        return book_locked(user, course)
+        credits = (Credits.objects.select_for_update().filter(user=user)
+                   .values_list('number', flat=True).first() or 0)
+        bookable = (credits >= 1 and course.capacity > 0 and not course.is_cancelled
+                    and not Booking.objects.filter(user=user, course=course).exists())
+        if bookable:
+            # die Warteliste des gebuchten Kurses selbst blockiert nicht
+            blocking = list(active_waitlists(user).exclude(course=course)
+                            .select_related('course', 'course__category').order_by('course__date'))
+            released = [e for e in blocking if release is not None and str(e.pk) == str(release)]
+            if credits - (len(blocking) - len(released)) < 1:
+                return BookingResult.WAITLIST_CONFLICT, blocking
+        else:
+            released = []
+
+        result, credits_left = book_locked(user, course)
+        if result is BookingResult.BOOKED and released:
+            WaitlistEntry.objects.filter(pk=released[0].pk).update(status=WaitlistEntry.LEFT)
+        return result, credits_left

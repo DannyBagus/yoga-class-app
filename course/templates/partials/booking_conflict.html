@@ -1,0 +1,74 @@
+{# Buchung blockiert: der freie Credit ist fuer eine Warteliste reserviert. #}
+{# "Ja" schickt dieselbe Buchung mit release=<Eintrag>; der Eintrag wird nur #}
+{# aufgehoben, wenn die Buchung klappt. #}
+<div
+  id="booking-conflict"
+  x-data="{ open: true }"
+  x-show="open"
+  @keydown.escape.window="open = false"
+  class="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/70 p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="booking-conflict-title"
+>
+  <div class="w-full max-w-md rounded-2xl bg-white text-black p-6 shadow-xl" @click.outside="open = false">
+    <h2 id="booking-conflict-title" class="text-lg font-semibold mb-2">
+      {{ conflict.course.category.name }} - {{ conflict.course.name }} buchen?
+    </h2>
+    {% if conflict.entries|length == 1 %}
+    {% with e=conflict.entries.0 %}
+    <p class="mb-2">
+      Du bist bereits auf der Warteliste für
+      <strong>{{ e.course.category.name }} - {{ e.course.name }}</strong>
+      ({{ e.course.date|date:"D d.m." }}, {{ e.course.start|time:"H:i" }} Uhr).
+      Dein Credit ist dafür reserviert.
+    </p>
+    <p class="mb-5">Sollen wir Dich von der Warteliste entfernen?</p>
+    <div class="flex flex-col gap-2">
+      <button
+        type="button"
+        class="w-full min-h-[44px] rounded-xl px-4 font-semibold bg-[#00df9a] text-[#00261a] hover:bg-[#3ff0b6]"
+        hx-get="{% url 'create-booking' %}?course={{ conflict.course.pk }}&amp;release={{ e.pk }}"
+        hx-include="#active-filter"
+        hx-target="#courses-list"
+        hx-swap="innerHTML"
+      >
+        Ja, entfernen und buchen
+      </button>
+    {% endwith %}
+    {% else %}
+    <p class="mb-2">
+      Du bist bereits auf {{ conflict.entries|length }} Wartelisten. Für jede ist ein Credit reserviert.
+    </p>
+    <p class="mb-3">Sollen wir Dich von der Warteliste entfernen? Wähle, welchen Platz Du aufgibst:</p>
+    <div class="flex flex-col gap-2">
+      {% for e in conflict.entries %}
+      <button
+        type="button"
+        class="w-full min-h-[44px] rounded-xl px-4 text-left font-medium ring-1 ring-black/20 hover:ring-black/50"
+        hx-get="{% url 'create-booking' %}?course={{ conflict.course.pk }}&amp;release={{ e.pk }}"
+        hx-include="#active-filter"
+        hx-target="#courses-list"
+        hx-swap="innerHTML"
+      >
+        Ja, von Warteliste {{ e.course.category.name }} - {{ e.course.name }}
+        ({{ e.course.date|date:"D d.m." }}) entfernen und buchen
+      </button>
+      {% endfor %}
+    {% endif %}
+      <a
+        href="{% url 'my-account' %}?tab=credits"
+        class="w-full min-h-[44px] rounded-xl px-4 flex items-center justify-center font-medium ring-1 ring-[#e46aeb] text-[#a3249f] hover:bg-[#fdf2fd]"
+      >
+        Credits kaufen
+      </a>
+      <button
+        type="button"
+        class="w-full min-h-[44px] rounded-xl px-4 font-medium text-black/70 hover:text-black"
+        @click="open = false"
+      >
+        Abbrechen
+      </button>
+    </div>
+  </div>
+</div>

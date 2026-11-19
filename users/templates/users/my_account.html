@@ -16,8 +16,8 @@
   <!-- navigation buttons -->
   <div
     id="navigation-buttons"
-    x-data="{ selected: '' }"
-    hx-get="{% url 'my-account' %}?navigate=news"
+    x-data="{ selected: '{{ tab }}' }"
+    hx-get="{% url 'my-account' %}?navigate={{ tab|default:'news' }}{% if tab == 'credits' %}&amp;buy=1{% endif %}"
     hx-trigger="load"
     hx-target="#my-account-content"
     hx-swap="innerHTML"

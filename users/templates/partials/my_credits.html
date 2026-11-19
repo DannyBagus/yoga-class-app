@@ -1,6 +1,6 @@
 <div
   class="text-white"
-  x-data="{ purchaseCredits: false }"
+  x-data="{ purchaseCredits: {{ open_purchase|yesno:'true,false' }} }"
 >
   <!-- Credits content -->
   <div

@@ -23,8 +23,8 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from users.models import Credits
-from .booking import BookingResult, book_locked, course_start
-from .cancellation import CUSTOMER_REPLY_TO, SWISS_TZ, _send_mail
+from .booking import BookingResult, active_waitlists, book_locked, course_start
+from .cancellation import CUSTOMER_REPLY_TO, _send_mail
 from .models import Booking, Courses, WaitlistEntry
 
 logger = logging.getLogger(__name__)
@@ -65,13 +65,6 @@ def waiting_count(course):
 
 
 # --- Eintragen / Austragen --------------------------------------------------
-
-def active_waitlists(user):
-    """Wartende Eintraege der Kundin fuer kommende, nicht abgesagte Kurse.
-    (Eintraege vergangener Kurse bleiben 'waiting' stehen und zaehlen nicht.)"""
-    return WaitlistEntry.objects.filter(
-        user=user, status=WaitlistEntry.WAITING, course__is_cancelled=False,
-        course__date__gte=timezone.localdate(timezone=SWISS_TZ))
 
 def join(user, course):
     """Traegt ``user`` auf die Warteliste ein (idempotent) oder wirft WaitlistError."""
